@@ -5,7 +5,7 @@ This project can run a watch program on your stm32 board. I am intend to making 
 
 ## Overview
 
-<img src="./asset/readme_overview.gif" alt="image" style="zoom:25%;" />
+<img src="./asset/readme_overview.gif" alt="image" style="zoom:15%;" />
 
 
 

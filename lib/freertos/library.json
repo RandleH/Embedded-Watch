@@ -1,0 +1,24 @@
+{
+    "authors": [
+        {
+            "maintainer": true,
+            "name": "Matthew Mirvish"
+        },
+        {
+            "name": "STMicroelectronics & FreeRTOS developers"
+        }
+    ],
+    "build": {
+        "extraScript": "add_config.py"
+    },
+    "description": "This library links in the version of FreeRTOS shipped with the STM32Cube framework. ",
+    "frameworks": "stm32cube",
+    "keywords": "rtos",
+    "name": "STM32Cube Middleware-FreeRTOS",
+    "platforms": "ststm32",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/mincrmatt12/stm32-platformio-freertos.git"
+    },
+    "version": "10.3.1+f4-1.26.1"
+}

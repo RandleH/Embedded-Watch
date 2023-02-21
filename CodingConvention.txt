@@ -1,0 +1,149 @@
+/**
+  ******************************************************************************
+  * @file    template.txt
+  * @author  RandleH
+  * @brief   This file contains code template.
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2022 RandleH.
+  * All rights reserved.
+  *
+  * This software component is licensed by RandleH under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+  *
+  ******************************************************************************
+  */
+
+/// Table
+/// ====================================================== 
+///  Screen Pin IO        | STM32 Pin IO | Peripheral
+/// ----------------------+--------------+----------------
+///  MOSI                 | PB15         | SPI
+/// ----------------------+--------------+----------------
+///  SCL                  | PB13         | SPI
+/// ----------------------+--------------+----------------
+///  CS                   | PB12         | GPIO
+/// ----------------------+--------------+----------------
+///  RES                  | PB8          | GPIO
+/// ----------------------+--------------+----------------
+///  DC                   | PB9          | GPIO
+/// ------------------------------------------------------
+
+/* CPP_FILE ------------------------------------------------------------------*/
+/* Includes ------------------------------------------------------------------*/
+/* Private typedef -----------------------------------------------------------*/
+/* Private define ------------------------------------------------------------*/
+/* Private macro -------------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
+/* Private function prototypes -----------------------------------------------*/
+/* Private functions ---------------------------------------------------------*/
+/* Functions -----------------------------------------------------------------*/
+
+/* HPP_FILE ------------------------------------------------------------------*/
+/* Includes ------------------------------------------------------------------*/
+/* Exported types ------------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
+/* Exported macro ------------------------------------------------------------*/
+/* Exported functions ------------------------------------------------------- */
+
+
+/******************************************************************************/
+/* Important Notation                                                         */
+/* xxxxxxx xxxxxxx xxxxxxx xxxxxxx xxxxxxx xxxxxxx                            */
+/* xxxxxxx xxxxxxx xxxxxxxxxxxxxx xxxxxxx xxxxxxx                             */
+/* xxxxxx xxxxxx xxxxxxx xxxxxxx xxxxxxx                                      */
+/******************************************************************************/
+
+	
+#error "Please identifier your communication protocol."
+
+
+
+/** 
+ * @brief  Peripherals Clock function
+ * @param  (none)   
+ * @retval (none)
+*/
+static inline void __configClock(void){
+// #error "Please check this function and comment this line."	  
+#if !defined (USE_HAL_DRIVER)
+#else
+#endif
+}
+
+/**
+ * @brief  Module delay function
+ * @param  ms   Milliseconds
+ * @retval (none)
+*/
+static inline void __delay_ms( unsigned long ms){
+// #error "Please check this function and comment this line."	
+}
+
+/**
+ * @brief  Module delay function
+ * @param  us   Microseconds
+ * @retval (none)
+*/
+static inline void __delay_us( unsigned long us){
+// #error "Please check this function and comment this line."	
+}
+
+/**
+ * @brief  Hardware IO pin initialization for I2C
+ * @param  (none)
+ * @retval (none)
+*/
+static inline void __configI2C(void){
+
+}
+
+/**
+ * @brief  Function assertion
+ * @param  expr  Expected expression
+ * @retval (none)
+*/
+static inline void __assert(bool expr){
+
+}
+
+/**
+ * @brief  Hardware IO pin initialization for SPI 
+ * @param  (none)
+ * @retval (none)
+*/
+static inline void __configSPI(void){
+}
+
+/**
+ * @brief Write one byte to screen 
+ * @param addr Device i2c address
+ * @param data 8-bit raw data
+*/
+static void __writeByte(uint8_t addr,uint8_t data){
+
+}
+
+/** 
+ * @brief  Write 8-bit data to device
+ * @param  data
+ * @retval (none)
+*/
+static void __writeDat(uint8_t data){
+
+}
+
+/** 
+ * @brief  Write 8-bit command to device
+ * @param  cmd
+ * @retval (none)
+*/
+static void __writeCmd(uint8_t cmd){
+
+}
+
+
+/************************ (C) COPYRIGHT RandleH *****END OF FILE****/

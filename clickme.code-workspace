@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"rh_debug.h": "c",
+			"lvgl.h": "c",
+			"rh_screen.h": "c",
+			"stm32f4xx_hal.h": "c",
+			"stm32f4xx.h": "c",
+			"freertos.h": "c",
+			"freertosconfig.h": "c",
+			"lv_theme.h": "c",
+			"lv_hal.h": "c",
+			"lv_group.h": "c",
+			"rh_key.h": "c"
+		}
+	}
+}

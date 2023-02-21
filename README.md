@@ -5,7 +5,7 @@ This project can run a watch program on your stm32 board. I am intend to making 
 
 ## Overview
 
-<p align="center"> <img src="./asset/readme_overview.gif" alt="animated" width="240" height="240" align="center"/></p>
+<p align="center"> <img src="./asset/readme_overview.gif" alt="animated" width="240" height="240" /></p>
 
 
 
@@ -47,7 +47,7 @@ Also you are welcomed to build with the source code. The binary file was located
 
 
 
-<img src="./asset/readme_start_upload.jpg" alt="image2" style="zoom:30%;" />
+<img src="./asset/readme_start_upload.jpg" alt="image2" width="200" height="100" />
 
 
 

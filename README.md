@@ -46,10 +46,25 @@ Using the `binary` branch was recommended.
 Also you are welcomed to build with the source code. The binary file was located at this [page]().
 
 
+You may see the following console message on Vscode.
+```
+Uploading .pio/build/genericSTM32F411CE/firmware.elf
+xPack OpenOCD x86_64 Open On-Chip Debugger 0.11.0+dev (2021-10-17-00:18)
+Licensed under GNU GPL v2
+For bug reports, read
+        http://openocd.org/doc/doxygen/bugs.html
+debug_level: 1
 
-<img src="./asset/readme_start_upload.jpg" alt="image2" width="200" height="100" />
-
-
+hla_swd
+target halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x080233fc msp: 0x20020000
+** Programming Started **
+** Programming Finished **
+** Verify Started **
+** Verified OK **
+** Resetting Target **
+shutdown command invoked
+```
 
 
 

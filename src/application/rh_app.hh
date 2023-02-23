@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
-  * @file    rh_app.cc
+  * @file    rh_app.hh
   * @author  RandleH
-  * @brief   Main project application source code defination.
+  * @brief   Main project application source code declaration.
   ******************************************************************************
   * @attention
   *
@@ -17,8 +17,15 @@
   ******************************************************************************
   */
 
+
 /* Includes ------------------------------------------------------------------*/
-#include "rh_app.hh"
+#include <cstdint>
+#include <cstddef>
+#include <vector>
+#include <FreeRTOS.h>
+#include <task.h>
+#include <event_groups.h>
+#include "rh_common.h"
 
 
 
@@ -29,28 +36,23 @@ namespace rh{
 
 
 
+
+
+/* Exported types ------------------------------------------------------------*/
 /******************************************************************************/
-/* Bone class. All class must inherited from this                             */
+/* [453168] Bone class. All class must inherited from this                    */
 /* @category:                                                                 */
+/* @uniqueID:    453168                                                       */
 /******************************************************************************/
-Bone::Bone( void):
-isInitialized(false){
-
-}
-
-    
-int Bone::print( void){
-    return 0;
-}
-
-int Bone::reset( void){
-    return 0;
-}
-
-int Bone::init ( void){
-    return 0;
-}
-
+class Bone{
+protected:
+    bool isInitialized;
+public:
+    Bone( void);
+    int print( void);
+    int reset( void);
+    int init ( void);
+};
 
 
 /******************************************************************************/
@@ -58,14 +60,14 @@ int Bone::init ( void){
 /* @category:    System                                                       */
 /* @uniqueID:    239023                                                       */
 /******************************************************************************/
-AppSystem::AppSystem( void){
+class AppSystem : public Bone{
+private:
 
-}
+public:
+    AppSystem( void);
 
 
-
-
-
+};
 
 
 
@@ -75,16 +77,19 @@ AppSystem::AppSystem( void){
 /* @category:    Thread Control                                               */
 /* @uniqueID:    975338                                                       */
 /******************************************************************************/
-AppThread::AppThread( void){
-    
-}
+class AppThread:public Bone{
+private:              
+    std::pair< EventGroupHandle_t, StaticEventGroup_t> ev_device;     /*!< Device Event Group            */
+    std::pair< EventGroupHandle_t, StaticEventGroup_t> ev_network;    /*!< Network Event Group           */
 
+    std::vector<TaskHandle_t>                  tcb;       /*!< Static Task Control Block     */
+    std::vector<std::vector<StackType_t>>      stack;     /*!< Static Task Stack             */
+    std::vector<TaskHandle_t>                  dytcb;     /*!< Dynamic Task Control Block    */
+    std::vector<std::vector<StackType_t>>      dystack;   /*!< Dynamic Task Stack            */
 
-
-
-
-
-
+public:
+    AppThread( void);
+};
 
 
 
@@ -95,17 +100,12 @@ AppThread::AppThread( void){
 /* @category:    User Interface                                               */
 /* @uniqueID:    914842                                                       */
 /******************************************************************************/
-AppGUI::AppGUI( void){
+class AppGUI:public Bone{
+private:
+public:
+    AppGUI( void);
 
-}
-
-
-
-
-
-
-
-
+};
 
 
 
@@ -114,25 +114,21 @@ AppGUI::AppGUI( void){
 /* @category:                                                                 */
 /* @uniqueID:    473317                                                       */
 /******************************************************************************/
-Application::Application( void){
+class Application{
+private:
+public:
+    Application( void);
+
+    AppThread  thread;
+    AppGUI     gui;
+    AppSystem  system;
+    
+
+};
+
+
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}//////// END OF NAMESPACE /////////
 
 /************************ (C) COPYRIGHT RandleH *****END OF FILE***************/

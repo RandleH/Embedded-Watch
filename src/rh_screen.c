@@ -693,7 +693,7 @@ void rhlv_screen__flush_cb(struct _lv_disp_drv_t *disp_drv, const lv_area_t *are
  * @retval Pointer to the display driver
 */
 lv_disp_t* rhlv_screen__getDisp( void){
-    return &disp_drv;
+    return disp_handle;
 }
 
 

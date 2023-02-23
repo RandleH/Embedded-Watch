@@ -225,33 +225,6 @@ void SVC_Handler(void)
 
 /* USER CODE BEGIN 1 */
 void DMA2_Stream3_IRQHandler(void){
-
-  if(DMA2->LISR&(DMA_LISR_TCIF3)){
-    extern int tx_finished;
-		// tx_finished=1;
-
-		DMA2_Stream3->CR &= ~DMA_SxCR_EN;
-		DMA2->LIFCR |=DMA_LIFCR_CTCIF3;
-	}
-				
-  if(DMA2->LISR&(DMA_LISR_HTIF3)){
-    DMA2->LIFCR |=DMA_LIFCR_CHTIF3;
-  }
-      
-  
-  if(DMA2->LISR&(DMA_LISR_TEIF3)){
-    DMA2->LIFCR|=(DMA_LIFCR_CTEIF3);
-  }
-          
-  if(DMA2->LISR&(DMA_LISR_DMEIF3)){
-    DMA2->LIFCR|=(DMA_LIFCR_CDMEIF3);
-  }
-          
-  if(DMA2->LISR&(DMA_LISR_FEIF3)){
-    DMA2->LIFCR|=(DMA_LIFCR_CFEIF0);
-  }
-  
-  NVIC_ClearPendingIRQ(DMA2_Stream3_IRQn);
 }
 
 void DMA2_Stream2_IRQHandler(void){

@@ -40,12 +40,13 @@
 
 #include "rh_test.h"                  /* Unit Test Experiments */ 
 
+#include "application/rh_app.hh"
 #include "ui/rh_visual.hh"            /* Application Module */
 
 
 
 
-
+#include <CMSIS_RTOS_V2/cmsis_os2.h>
 
 
 
@@ -63,22 +64,31 @@ bool key0 = false;
  * @param argv[]
  * 
 */
+rh::Visual     gVisual;
+
 int main( int argc, char const *argv[] ){
     HAL_Init();
     HAL_NVIC_SetPriorityGrouping( NVIC_PRIORITYGROUP_4);
+    
+
+    
 
     rh_clock__init( 25, 192, 2, 4);
     rh_timer__init();
     rh_debug__init();
+    rh_debug__printf("APP Start!!\n");
+
+
+
     rhlv_screen__init();
     rh_screen__init();
     rh_light__init();
     rh_flash__init();
     rh_key__init();
 
-    rh_debug__printf("APP Start!!\n");
-
-    rh::Visual     gVisual;
+    
+    rh::Application app;
+    
     rh::ClockWheel uiClockWheel( gVisual.getScreen( rh::VISUAL_SCREEN__MAIN));
 
     gVisual.load( rh::VISUAL_SCREEN__MAIN);

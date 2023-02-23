@@ -146,4 +146,4 @@ static void __writeCmd(uint8_t cmd){
 }
 
 
-/************************ (C) COPYRIGHT RandleH *****END OF FILE****/
+/************************ (C) COPYRIGHT RandleH *****END OF FILE***************/

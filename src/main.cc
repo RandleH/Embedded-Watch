@@ -44,9 +44,8 @@
 #include "ui/rh_visual.hh"            /* Application Module */
 
 
-
-
 #include <CMSIS_RTOS_V2/cmsis_os2.h>
+
 
 
 
@@ -58,58 +57,51 @@ bool key0 = false;
 
 
 
-/**
- * @brief 
- * @param argc
- * @param argv[]
- * 
-*/
-rh::Visual     gVisual;
+
+
+
+rh::Application    app;
+
+
+
+
+
+
+
+
+
 
 int main( int argc, char const *argv[] ){
     HAL_Init();
     HAL_NVIC_SetPriorityGrouping( NVIC_PRIORITYGROUP_4);
-    
 
     
-
+    
     rh_clock__init( 25, 192, 2, 4);
     rh_timer__init();
     rh_debug__init();
-    rh_debug__printf("APP Start!!\n");
+    
 
-
-
-    rhlv_screen__init();
-    rh_screen__init();
     rh_light__init();
-    rh_flash__init();
-    rh_key__init();
+
 
     
-    rh::Application app;
     
-    rh::ClockWheel uiClockWheel( gVisual.getScreen( rh::VISUAL_SCREEN__MAIN));
+   
+    app.thread.init();
+    app.start();
+    
 
-    gVisual.load( rh::VISUAL_SCREEN__MAIN);
-    
-    uiClockWheel.setTime( false,  5, 5, 0);
 
     while(1){
-        rh_timer__set();
-        if( key0==true ){
-            rh_timer__delayMS(50);
-            if( RH_KEY__B==rh_key__read() ){
-                rh_debug__log( "Key0 triggered!\n");
-                rh_light__toggle( RH_LED_IDX__BLUE);
-            }
-            key0 = false;
-        }
+        
+        // if( (app.resource.userTick/1000) %2 ){
+        //     rh_light__switch( RH_LED_IDX__BLUE, true);
+        // }else{
+        //     rh_light__switch( RH_LED_IDX__BLUE, false);
+        // }
 
-        uiClockWheel.increaseTick(1);
-
-        lv_tick_inc( rh_timer__get()+1 );
-        lv_timer_handler();
+        
     }
     return 0;
 }

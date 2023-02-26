@@ -26,6 +26,7 @@
 #include <task.h>
 #include <event_groups.h>
 #include "rh_common.h"
+#include "ui/rh_visual.hh"
 
 
 
@@ -56,16 +57,32 @@ public:
 
 
 /******************************************************************************/
-/* [239023] This class handle low level embedded system program               */
-/* @category:    System                                                       */
+/* [239023] This class handle program shared resource                         */
+/* @category:    Resource                                                     */
 /* @uniqueID:    239023                                                       */
 /******************************************************************************/
-class AppSystem : public Bone{
-private:
+class AppResource : public Bone{
+public:
+    volatile u32   userTick;             /*!< User Tick Signal 1KHz */
+    volatile bool  UserTickOverflow;     /*!< User Tick Overflow Flag */
+    
+    volatile union{
+        struct{
+        u32   year      :12;             /*!< User Time - Year   */    
+        u32   month     :4;              /*!< User Time - Month  */
+        u32   date      :5;              /*!< User Time - Date   */
+        u32   hour      :5;              /*!< User Time - Hour   */
+        u32   minute    :6;              /*!< User Time - Minute */
+        u32   second    :6;              /*!< User Time - Second */
+        }bit;
+        u64 _;
+    }time;
+
+
+    volatile bool  key0;
 
 public:
-    AppSystem( void);
-
+    AppResource( void);
 
 };
 
@@ -82,17 +99,54 @@ private:
     std::pair< EventGroupHandle_t, StaticEventGroup_t> ev_device;     /*!< Device Event Group            */
     std::pair< EventGroupHandle_t, StaticEventGroup_t> ev_network;    /*!< Network Event Group           */
 
-    std::vector<TaskHandle_t>                  tcb;       /*!< Static Task Control Block     */
-    std::vector<std::vector<StackType_t>>      stack;     /*!< Static Task Stack             */
+    
+
+    std::pair<TaskHandle_t,StaticTask_t>       htcb_483377;       /*!< Screen Refreash */
+    StackType_t                                stak_483377[1024];
+
+
+    std::pair<TaskHandle_t,StaticTask_t>       htcb_526892;       /*!< Heart Beat LED  */
+    StackType_t                                stak_526892[1024];
+
+    std::pair<TaskHandle_t,StaticTask_t>       htcb_000000;       /*!< Idle Task */
+    StackType_t                                stak_000000[1024];
+
+    std::pair<TaskHandle_t,StaticTask_t>       htcb_000001;       /*!< Timer Systick Task */
+    StackType_t                                stak_000001[1024];
+
     std::vector<TaskHandle_t>                  dytcb;     /*!< Dynamic Task Control Block    */
     std::vector<std::vector<StackType_t>>      dystack;   /*!< Dynamic Task Stack            */
 
+    int addDeviceInit( void);       
+    int addGUIInit( void);
+    int addMainService( void);
 public:
     AppThread( void);
+    void getIdleTaskMemory ( StaticTask_t ** , StackType_t  ** , uint32_t * );
+    void getTimerTaskMemory( StaticTask_t ** , StackType_t  ** , uint32_t * );
+    
+    int init( void);
 };
 
 
 
+
+
+/******************************************************************************/
+/* [914842] This class contains display object information of lvgl            */
+/* @category:    User Interface                                               */
+/* @uniqueID:    914842                                                       */
+/******************************************************************************/
+class RH_API Display{
+private:
+    lv_color_t      gram1[RH_CFG_GRAM_SIZE];
+    lv_color_t      gram2[RH_CFG_GRAM_SIZE];    
+public:
+    lv_disp_t       *display; 
+    lv_disp_drv_t   driver;
+    lv_disp_draw_buf_t buf;
+    Display( void);
+};
 
 
 /******************************************************************************/
@@ -101,9 +155,13 @@ public:
 /* @uniqueID:    914842                                                       */
 /******************************************************************************/
 class AppGUI:public Bone{
-private:
+public:
+    Display       lvgl;                    /*!< Display information for LVGL library */
+    lv_obj_t     *screen;                  /*!< Default screen object                */
+    ClockWheel    uiClockWheel;            /*!< UI Widget - Clock Wheel              */
 public:
     AppGUI( void);
+    int load( void);
 
 };
 
@@ -118,17 +176,19 @@ class Application{
 private:
 public:
     Application( void);
-
-    AppThread  thread;
-    AppGUI     gui;
-    AppSystem  system;
+    AppResource  resource;      /*!< Global Shared Resource */
+    AppThread    thread;        /*!< Thread Management      */
+    AppGUI       gui;           /*!< Graphic UI Management  */
     
+    void start( void);
 
 };
 
 
 
+
+
 }
 
-
+extern rh::Application app;
 /************************ (C) COPYRIGHT RandleH *****END OF FILE***************/

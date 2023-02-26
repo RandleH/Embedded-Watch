@@ -150,13 +150,27 @@ header file. */
 
 /* Definitions that map the FreeRTOS port interrupt handlers to their CMSIS
    standard names. */
-#define vPortSVCHandler    DummySVC_Handler
-#define xPortPendSVHandler DummyPendSV_Handler
 
 /* IMPORTANT: FreeRTOS is using the SysTick as internal time base, thus make sure the system and peripherials are
               using a different time base (TIM based for example).
  */
-#define xPortSysTickHandler DummySysTick_Handler
+
+
+#include "rh_config.h"
+
+#if RH_CFG_RTOS_ENABLE
+# define vPortSVCHandler      SVC_Handler
+# define xPortPendSVHandler   PendSV_Handler
+# define xPortSysTickHandler  SysTick_Handler
+#else
+# define vPortSVCHandler      DUMMY_SVC_Handler
+# define xPortPendSVHandler   DUMMY_PendSV_Handler
+# define xPortSysTickHandler  DUMMY_SysTick_Handler
+#endif
+
+
+
+
 
 #endif /* FREERTOS_CONFIG_H */
 

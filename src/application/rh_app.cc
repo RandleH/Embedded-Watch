@@ -22,6 +22,31 @@
 
 
 
+
+#include "rh_config.h"
+#include "stm32f4xx.h"
+
+#ifdef __cplusplus
+extern "C"{
+#endif
+/**
+ * @brief   Timer User Application Interrupt Service Routine Function. 
+ * @param   (none)
+ * @retval  (none)
+ * @file  "rh_timer.c"
+*/
+void RH_CFG_TIMER_USERAPP_ISRFUNC(void){
+    ++app.resource.userTick;                 
+    RH_CFG_TIMER_USERAPP->SR = ~(TIM_SR_UIF);
+}
+#ifdef __cplusplus
+}
+#endif
+
+
+
+
+
 /* Name Space ----------------------------------------------------------------*/
 namespace rh{
 
@@ -53,39 +78,38 @@ int Bone::init ( void){
 
 
 
-/******************************************************************************/
-/* [239023] This class handle low level embedded system program               */
-/* @category:    System                                                       */
-/* @uniqueID:    239023                                                       */
-/******************************************************************************/
-AppSystem::AppSystem( void){
 
+
+
+
+
+
+
+
+
+
+
+/******************************************************************************/
+/* [914842] This class contains display object information of lvgl            */
+/* @category:    User Interface                                               */
+/* @uniqueID:    914842                                                       */
+/******************************************************************************/
+extern"C"{
+    void rhlv_screen__flush_cb(struct _lv_disp_drv_t *, const lv_area_t *, lv_color_t *);
 }
-
-
-
-
-
-
-
-
-
-/******************************************************************************/
-/* [975338] This class handle system task distribution                        */
-/* @category:    Thread Control                                               */
-/* @uniqueID:    975338                                                       */
-/******************************************************************************/
-AppThread::AppThread( void){
+Display::Display( void):
+gram1{0},gram2{0}{
+    lv_init();
+    __asm("nop");
+    lv_disp_drv_init( &this->driver );
+    this->driver.draw_buf = &this->buf;
+    this->driver.flush_cb = rhlv_screen__flush_cb;
+    this->driver.hor_res = RH_CFG_SCREEN_HEIGHT;
+    this->driver.ver_res = RH_CFG_SCREEN_WIDTH;
+    lv_disp_draw_buf_init( &this->buf, this->gram1, this->gram2, RH_CFG_GRAM_SIZE);
     
+    this->display = lv_disp_drv_register( &this->driver);
 }
-
-
-
-
-
-
-
-
 
 
 
@@ -95,11 +119,20 @@ AppThread::AppThread( void){
 /* @category:    User Interface                                               */
 /* @uniqueID:    914842                                                       */
 /******************************************************************************/
-AppGUI::AppGUI( void){
+AppGUI::AppGUI( void):
+lvgl(),screen(lv_obj_create(NULL)), uiClockWheel( (void*)screen){
+
+    lv_obj_set_style_bg_color ( screen, lv_color_hex(0x191919), LV_PART_MAIN | LV_STATE_DEFAULT );
+    lv_obj_set_style_bg_opa   ( screen,                    255, LV_PART_MAIN | LV_STATE_DEFAULT );
+
+    uiClockWheel.setTime( app.resource.time.bit.hour>=12, app.resource.time.bit.hour, app.resource.time.bit.minute, app.resource.time.bit.second );
 
 }
 
-
+int AppGUI::load( void){
+    lv_scr_load( screen);
+    return 0;
+}
 
 
 
@@ -118,7 +151,9 @@ Application::Application( void){
 
 }
 
-
+void Application::start( void){
+    vTaskStartScheduler();
+}
 
 
 

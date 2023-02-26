@@ -97,10 +97,11 @@ static inline void __configGPIO(void){
  * @param   (none)
  * @retval  (none)
 */
-void rh_light__init(void){
+int rh_light__init(void){
     __configClock();
     __configGPIO();
     rh_light__switch( RH_LED_IDX__BLUE, false);
+    return 0;
 }
 
 /**

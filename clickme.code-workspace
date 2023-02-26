@@ -17,7 +17,8 @@
 			"lv_hal.h": "c",
 			"lv_group.h": "c",
 			"rh_key.h": "c",
-			"stm32f4xx_hal_rcc.h": "c"
+			"stm32f4xx_hal_rcc.h": "c",
+			"lwesp_private.h": "c"
 		}
 	}
 }

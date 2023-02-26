@@ -132,7 +132,7 @@ static inline void __sendBytes( const char *buf, size_t len){
 */
 static inline void __configUSART(void){
     huart.Instance        = USART2;
-    huart.Init.BaudRate   = CFG_DEBUG__BAUDRATE;				   
+    huart.Init.BaudRate   = RH_CFG_DEBUG_BAUDRATE;				   
     huart.Init.WordLength = UART_WORDLENGTH_8B;
     huart.Init.StopBits   = UART_STOPBITS_1;
     huart.Init.Parity     = UART_PARITY_NONE;
@@ -164,7 +164,7 @@ int rh_debug__init  ( void){
 */
 int rh_debug__printf( const char * fmt, ...){
 #if CFG_DEBUG__ENABLE     
-    char tmp[256] = {0};
+    static char tmp[256] = {0};
 
     va_list ap;
     va_start( ap, fmt);

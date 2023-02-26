@@ -9,12 +9,7 @@
 
 
 
-#define CFG_DEBUG__ENABLE       1
 
-#define CFG_DEBUG__LOG          1
-#define CFG_DEBUG__WARNING      0
-#define CFG_DEBUG__ERROR        0
-#define CFG_DEBUG__BAUDRATE     (115200U)
  
 #ifdef __cplusplus
 extern "C"{

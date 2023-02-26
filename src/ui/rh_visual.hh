@@ -134,19 +134,15 @@ private:
     lv_obj_t * screen;
     lv_obj_t * obj;
     u16        angle;
-    u16        tick;
     lv_color_t color[2];
-
-    u16 ratioDeg;
-    u32 ratioTick;
-    u32 ratioMs;
 
 public:
     ClockWheelComponent( void * screen, u16 diameter, u16 width);
 
     int init( u16 diameter, u16 width);
-    int setRatio( u16 deg, u32 tick, u32 ms);
+    int setRatio( u32 tick_deg);
     int setColor( u32 color1, u32 color2 );
+    int setColor( lv_color_t color1, lv_color_t color2 );
 
     int increaseTick( u32 tick);
     int increase( void);
@@ -167,7 +163,7 @@ private:
     ClockWheelComponent           ccMinute;
     ClockWheelComponent           ccHour;
     ClockWheelPictureComponent    ccDayIcon;
-    
+    u32 tick;
 public:
     ClockWheel( void * screen);
     int init( void);

@@ -40,7 +40,10 @@ extern "C"{
 #define TIMx_COUNT         RH_CFG_TIMER_COUNT
 #define TIMx_COUNT_RCCEN   RH_CFG_TIMER_COUNT_CLKCMD
 
-
+#define TIMx_USERAPP         RH_CFG_TIMER_USERAPP
+#define TIMx_USERAPP_RCCEN   RH_CFG_TIMER_USERAPP_CLKCMD
+#define TIMx_USERAPP_ISR     RH_CFG_TIMER_USERAPP_ISRFUNC
+#define TIMx_USERAPP_ARR     RH_CFG_TIMER_USERAPP_ARR
 
 
 
@@ -89,6 +92,8 @@ static inline void __configClock(void){
 // #error "Check the following clock setting and then comment this line."
     SET_BIT( RCC->APB1ENR, RH_CFG_TIMER_DELAY_CLKCMD );
     SET_BIT( RCC->APB1ENR, RH_CFG_TIMER_COUNT_CLKCMD );
+    SET_BIT( RCC->APB1ENR, RH_CFG_TIMER_USERAPP_CLKCMD);
+
 }
 
 
@@ -156,7 +161,37 @@ int rh_timer__init( void){
     SET_BIT  ( TIMx_COUNT->DIER, TIM_DIER_UIE);
   }
 
+  /**
+   * @details Initialize the timer for user application ticks
+  */
+  {
+    TIMx_USERAPP->ARR = TIMx_USERAPP_ARR;
+    TIMx_USERAPP->PSC = CLK_MHz*2-1;
 
+    SET_BIT  ( TIMx_USERAPP->EGR, TIM_EGR_UG );   // Generate an update
+    
+    SET_BIT  ( TIMx_USERAPP->CR1, TIM_CR1_DIR);   // Down Counter
+    SET_BIT  ( TIMx_USERAPP->CR1, TIM_CR1_URS);   // Update only when overflow
+    CLEAR_BIT( TIMx_USERAPP->CR1, TIM_CR1_OPM);   // One-pulse mode
+    SET_BIT  ( TIMx_USERAPP->CR1, TIM_CR1_ARPE);  // Auto-reload preload
+    
+    CLEAR_BIT( TIMx_USERAPP->CR1, TIM_CR1_CKD_0); // No clock division
+    CLEAR_BIT( TIMx_USERAPP->CR1, TIM_CR1_CKD_1);
+
+    CLEAR_BIT( TIMx_USERAPP->CR1, TIM_CR1_UDIS);
+
+    TIMx_USERAPP->SR = 0x00000000;
+    SET_BIT( TIMx_USERAPP->DIER, TIM_DIER_UIE);
+    
+    HAL_NVIC_SetPriority( TIM4_IRQn, 1, 3);
+	HAL_NVIC_EnableIRQ(TIM4_IRQn);
+    
+
+    SET_BIT( TIMx_USERAPP->CR1, TIM_CR1_CEN);  // Enable timer
+
+    
+    
+  }
   return 0;
 }
 
@@ -231,7 +266,7 @@ int rh_timer__set( void){
 /**
  * @brief  Stop the counter. `rh_timer__set()` should be called before using this function.
  * @param  (none)
- * @retval Return the value in millionsecond if success.
+ * @retval Return the value in microsecond if success.
  *         Return -1 if time out.
 */
 int rh_timer__get( void){
@@ -246,8 +281,13 @@ int rh_timer__get( void){
     TIMx_COUNT->SR  = 0x00000000;
 
     
-    return ((cnt+1)*(psc+1))/(CLK_KHz);
+    return ((cnt+1)*(psc+1))/(CLK_MHz);
 }
+
+
+
+
+
 
 
 

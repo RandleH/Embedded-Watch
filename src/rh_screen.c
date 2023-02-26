@@ -78,6 +78,7 @@
 
 #include "rh_screen.h"
 #include "rh_common.h"
+#include "rh_config.h"
 #include "rh_timer.h"
 #include "rh_debug.h"
 
@@ -110,7 +111,6 @@ static inline void __assert( bool expr){
 static inline void __delay_ms( unsigned long ms){
 // #error "Please check this function and comment this line." 
     rh_timer__delayMS(ms);
-    // vTaskDelay(ms);
 }
 
 

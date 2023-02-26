@@ -170,9 +170,8 @@ static inline void __assert( bool expr){
  * @retval (none)
 */
 static inline void __delay_ms( unsigned long ms){
-// #error "Please check this function and comment this line."
+// #error "Please check this function and comment this line." 
     rh_timer__delayMS(ms);
-    // vTaskDelay(ms);
 }
 
 

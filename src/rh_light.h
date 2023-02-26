@@ -35,7 +35,7 @@
 extern "C"{
 #endif
 
-void rh_light__init  ( void);
+int  rh_light__init( void);
 void rh_light__switch( int idx, bool cmd);
 void rh_light__toggle( int idx);
 

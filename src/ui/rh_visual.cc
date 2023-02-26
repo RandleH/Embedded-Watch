@@ -23,6 +23,7 @@
 #include <utility>
 #include "ui/rh_visual.hh"
 #include "ui/rh_asset.h"
+#include "rh_color.h"
 
 
 /* Namespace -----------------------------------------------------------------*/
@@ -34,14 +35,14 @@ namespace rh{
 #define CLOCKWHEEL_START_ANGLE      (270)
 #define CLOCKWHEEL_END_ANGLE        (270+360)
 
-#define COLOR_SECOND_DK             0x781111
-#define COLOR_SECOND_LT             0xFF1111
+#define COLOR_SECOND_DK             M_COLOR_DARKOLIVEGREEN
+#define COLOR_SECOND_LT             M_COLOR_LAWNGREEN
 
-#define COLOR_MINUTE_DK             0x117811
-#define COLOR_MINUTE_LT             0x11FF11
+#define COLOR_MINUTE_DK             M_COLOR_SIENNA
+#define COLOR_MINUTE_LT             M_COLOR_ORANGE
 
-#define COLOR_HOUR_DK               0x116544
-#define COLOR_HOUR_LT               0x11FFDD
+#define COLOR_HOUR_DK               M_COLOR_INDIGO
+#define COLOR_HOUR_LT               M_COLOR_VOILET
 
 
 
@@ -196,7 +197,7 @@ int ClockWheelPictureComponent::setDayNight( bool day_night){
 /* This class is a UI component                                               */
 /* @category:    User Interface -> Widget -> Component                        */
 /******************************************************************************/
-ClockWheelComponent::ClockWheelComponent( void * screen, u16 diameter, u16 width):screen((lv_obj_t*)screen),angle(0),tick(0){
+ClockWheelComponent::ClockWheelComponent( void * screen, u16 diameter, u16 width):screen((lv_obj_t*)screen),angle(0){
     init( diameter, width);
 }
 
@@ -219,10 +220,8 @@ int ClockWheelComponent::init( u16 diameter, u16 width){
     return 0;
 }
 
-int ClockWheelComponent::setRatio( u16 deg, u32 tick, u32 ms){
-    ratioDeg  = deg;
-    ratioTick = tick;
-    ratioMs   = ms;
+int ClockWheelComponent::setRatio( u32 tick_deg){
+    ratioTick = tick_deg;
     return 0;
 }
 
@@ -233,24 +232,22 @@ int ClockWheelComponent::setColor( u32 color1, u32 color2 ){
     return 0;
 }
 
+int ClockWheelComponent::setColor( lv_color_t color1, lv_color_t color2 ){
+    color[0] = color1; color[1] = color2;
+    lv_obj_set_style_arc_color( obj, color[0], LV_PART_MAIN      | LV_STATE_DEFAULT );
+    lv_obj_set_style_arc_color( obj, color[1], LV_PART_INDICATOR | LV_STATE_DEFAULT );
+    return 0;
+}
+
 int ClockWheelComponent::increaseTick( u32 tick){
     if( tick==0 ) return 0;
     tick %= this->ratioTick;
     
     u16 deltaAngle = 0;
-    if( this->ratioDeg==360 && this->ratioTick==1440){    // Optimization
-        deltaAngle = (this->tick + tick)>>2; 
-        this->angle += deltaAngle;
-        this->tick  += tick - (deltaAngle<<2);
-    }else if(  this->ratioDeg==360 && this->ratioTick==86440 ){ // Optimization
-        deltaAngle = (this->tick + tick)/240; 
-        this->angle += deltaAngle;
-        this->tick  += tick - (deltaAngle<<4)*15;
-    }else{
-        deltaAngle   = (this->tick + tick)* this->ratioDeg / this->ratioTick;
-        this->angle += deltaAngle;
-        this->tick   = (this->tick + tick)* this->ratioDeg % this->ratioTick / this->ratioDeg;
-    }
+    
+    deltaAngle = (this->tick+tick)/ratioTick;
+    this->angle  += deltaAngle;
+    this->tick   = (this->tick+tick)%ratioTick;
     
     if( this->angle >= 360 ){
         this->angle -= 360;
@@ -288,16 +285,26 @@ int ClockWheelComponent::setAngle( u16 deg){
 /* @category:    User Interface -> Widget                                     */
 /******************************************************************************/
 ClockWheel::ClockWheel( void * screen):
-ccSecond(screen, 240, 20), ccMinute(screen, 200, 20), ccHour(screen, 160, 20), ccDayIcon(screen, &ui_img_sun_png, &ui_img_moon_png){
+ccSecond(screen, 240, 20), ccMinute(screen, 200, 20), ccHour(screen, 160, 20), ccDayIcon(screen, &ui_img_sun_png, &ui_img_moon_png),tick(0){
+    
+    lv_color_t color1, color2;
+    color1.full = COLOR_HOUR_DK; color2.full = COLOR_HOUR_LT;
+    ccHour.setColor( color1, color2);
 
-    ccHour.setColor( COLOR_HOUR_DK, COLOR_HOUR_LT);
-    ccMinute.setColor( COLOR_MINUTE_DK, COLOR_MINUTE_LT);
-    ccSecond.setColor( COLOR_SECOND_DK, COLOR_SECOND_LT);
+    color1.full = COLOR_MINUTE_DK; color2.full = COLOR_MINUTE_LT;
+    ccMinute.setColor( color1, color2);
+
+    color1.full = COLOR_SECOND_DK; color2.full = COLOR_SECOND_LT;
+    ccSecond.setColor( color1, color2);
+
+    // ccHour.setColor( COLOR_HOUR_DK, COLOR_HOUR_LT);
+    // ccMinute.setColor( COLOR_MINUTE_DK, COLOR_MINUTE_LT);
+    // ccSecond.setColor( COLOR_SECOND_DK, COLOR_SECOND_LT);
     
     
-    ccHour.setRatio  ( 360, 5186400, 3600000);
-    ccMinute.setRatio( 360,   86440,   60000);
-    ccSecond.setRatio( 360,    1440,    1000);  // Recommanded!!!   1440ticks == 1000ms
+    ccHour.setRatio  ( 4*60*12);
+    ccMinute.setRatio( 4*60);
+    ccSecond.setRatio( 4);  
 
     ccDayIcon.setRatio( 3600*12*1440 );
 }
@@ -308,6 +315,7 @@ int ClockWheel::init( void){
 
 int ClockWheel::increaseTick( u32 tick ){
     int retval = 0;
+    
     retval |= ccHour.increaseTick(tick);
     retval |= ccMinute.increaseTick(tick);
     retval |= ccSecond.increaseTick(tick);
@@ -317,10 +325,19 @@ int ClockWheel::increaseTick( u32 tick ){
 
 int ClockWheel::setTime( bool am_pm, u8 hour, u8 minute, u8 second ){
     
-    ccHour.setAngle  ( hour   * ccHour.ratioDeg   /12 );
-    ccMinute.setAngle( minute * ccMinute.ratioDeg /60 );
-    ccSecond.setAngle( second * ccSecond.ratioDeg /60 );
-    ccDayIcon.setDayNight( am_pm);
+    ccHour.setAngle  ( hour   * 360 /12 );
+    ccMinute.setAngle( minute * 360 /60 );
+    ccSecond.setAngle( second * 360 /60 );
+
+    // Only 06:30~18:00 will be recognized as Day
+    if(   (    (am_pm==false)    &&    ( (hour>6) || ((hour==6)&&(minute>=30)) ) )\
+        || \
+          ((am_pm==true ) && (hour<6)) ){
+        ccDayIcon.setDayNight( false);
+    }else{
+        ccDayIcon.setDayNight( true);
+    }
+    
 
     ccHour.resetTick();
     ccMinute.resetTick();

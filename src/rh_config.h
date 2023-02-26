@@ -73,11 +73,14 @@ extern "C" {
 #define RH_CFG_DEBUG_WARNING_MASSEGE_ENABLE   (1)                           // < select > < 0=disable : 1=enable >
 #define RH_CFG_DEBUG_LOG_MASSEGE_ENABLE       (1)                           // < select > < 0=disable : 1=enable >
 
+#define RH_CFG_DEBUG_BAUDRATE                 (921600U)                     // < select >
+
+
 
 /* Timer Config --------------------------------------------------------------*/
 #define RH_CFG_TIMER_BUS_FREQ_MHz             (96U)
 
-#define RH_CFG_TIMER_DELAY                    TIM3   
+#define RH_CFG_TIMER_DELAY                    TIM3                          // < select > < TIM2 | TIM3 | TIM4 |TIM5 >
 #define RH_CFG_TIMER_DELAY_ISRFUNC            TIM3_Handler
 #define RH_CFG_TIMER_DELAY_CLKCMD             RCC_APB1ENR_TIM3EN
 
@@ -85,8 +88,13 @@ extern "C" {
 #define RH_CFG_TIMER_COUNT_ISRFUNC            TIM2_Handler
 #define RH_CFG_TIMER_COUNT_CLKCMD             RCC_APB1ENR_TIM2EN
 
+#define RH_CFG_TIMER_USERAPP                  TIM4                          // < select > < TIM2 | TIM3 | TIM4 | TIM5 >
+#define RH_CFG_TIMER_USERAPP_ISRFUNC          TIM4_IRQHandler
+#define RH_CFG_TIMER_USERAPP_CLKCMD           RCC_APB1ENR_TIM4EN
+#define RH_CFG_TIMER_USERAPP_ARR              (1000U-1)                       // < select >
 
-#define RH_CFG_TIMER_PWM                      TIM4
+
+
 
 
 /* Flash Config --------------------------------------------------------------*/
@@ -98,7 +106,7 @@ extern "C" {
 #define RH_CFG_TEST_BSP                       (1)                           // < select > < 0=disable : 1=enable >
 
 /* RTOS Config ---------------------------------------------------------------*/
-#define RH_CFG_RTOS_ENABLE                    (0)                           // < select > < 0=disable : 1=enable >
+#define RH_CFG_RTOS_ENABLE                    (1)                           // < select > < 0=disable : 1=enable >
 
 
 

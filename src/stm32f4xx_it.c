@@ -39,7 +39,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define USE_FREERTOS    0
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -245,7 +245,6 @@ void EXTI0_IRQHandler( void){
     }
     NVIC_ClearPendingIRQ( EXTI0_IRQn );
 }
-
 
 
 

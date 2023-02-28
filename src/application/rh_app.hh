@@ -29,6 +29,8 @@
 #include "application/rh_visual.hh"
 
 
+#include "application/widgets/clock880289/port.hh"
+
 
 /* Name Space ----------------------------------------------------------------*/
 namespace rh{
@@ -156,9 +158,12 @@ public:
 /******************************************************************************/
 class AppGUI:public Bone{
 public:
-    Display       lvgl;                    /*!< Display information for LVGL library */
-    lv_obj_t     *screen;                  /*!< Default screen object                */
-    ClockWheel    uiClockWheel;            /*!< UI Widget - Clock Wheel              */
+    Display       lvgl;                         /*!< Display information for LVGL library */
+    lv_obj_t     *screen;                       /*!< Default screen object                */
+    
+    rh::widget880289::Widget      uiClockWheel;         /*!< UI Widget - Clock Wheel              */
+    
+
 public:
     AppGUI( void);
     int load( void);

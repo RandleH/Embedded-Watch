@@ -234,6 +234,14 @@ void RH_CFG_TIMER_USERAPP_ISRFUNC(void){
 
 
 
+void RTC_WKUP_IRQHandler(void){
+
+}
+
+void RTC_Alarm_IRQHandler(void){
+  
+}
+
 #ifdef __cplusplus
 }
 #endif

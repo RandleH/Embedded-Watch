@@ -106,7 +106,7 @@ extern "C" {
 #define RH_CFG_TEST_BSP                       (1)                           // < select > < 0=disable : 1=enable >
 
 /* RTOS Config ---------------------------------------------------------------*/
-#define RH_CFG_RTOS_ENABLE                    (1)                           // < select > < 0=disable : 1=enable >
+#define RH_CFG_RTOS_ENABLE                    (0)                           // < select > < 0=disable : 1=enable >
 
 
 

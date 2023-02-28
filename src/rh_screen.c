@@ -77,8 +77,6 @@
 #endif
 
 #include "rh_screen.h"
-#include "rh_common.h"
-#include "rh_config.h"
 #include "rh_timer.h"
 #include "rh_debug.h"
 
@@ -654,11 +652,15 @@ int rh_screen__flush_buf  ( E_ScreenColor_t buf[], int xs, int ys, int xe, int y
 
 
 /* Private variables ---------------------------------------------------------*/
+#if RH_CFG_RTOS_ENABLE==0   /* Only for bare metal development */
 static lv_disp_draw_buf_t  disp_buf;
 static lv_disp_drv_t       disp_drv;
 static lv_disp_t          *disp_handle;
 static lv_color_t          lv_gram1[RH_CFG_GRAM_SIZE];
 static lv_color_t          lv_gram2[RH_CFG_GRAM_SIZE];
+#endif
+
+
 
 /* API functions ------------------------------------------------------------ */
 
@@ -687,6 +689,9 @@ void rhlv_screen__flush_cb(struct _lv_disp_drv_t *disp_drv, const lv_area_t *are
 
     lv_disp_flush_ready( disp_drv);
 }
+
+
+#if RH_CFG_RTOS_ENABLE==0   /* Only for bare metal development */
 
 /**
  * @brief  
@@ -723,6 +728,7 @@ int rhlv_screen__init(void){
     return 0;
 }
 
+#endif
 
 
 #ifdef __cplusplus

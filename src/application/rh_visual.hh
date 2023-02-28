@@ -66,6 +66,33 @@ public:
 };
 
 
+/******************************************************************************/
+/* This class is a template class. All widgets should inherit from this.      */
+/* @category:    User Interface                                               */
+/******************************************************************************/
+class Widget{
+protected:
+    u32      tick;
+public:
+    Widget( void* screen);
+    virtual int increaseTick( u32 tick);
+};
+
+
+/******************************************************************************/
+/* This class is a template class for clock widget. All clock widgets should  */
+/* inherit from this                                                          */
+/* @category:    User Interface                                               */
+/******************************************************************************/
+class ClockWidget : public Widget{
+protected:
+    bool am_pm;                      /*!< [0]=AM; [1]=PM */
+public:
+    ClockWidget( void* screen);
+    virtual int setTime( bool am_pm, u8 hour, u8 minute, u8 second );
+    virtual int setDayNight( bool day_night);
+};
+
 
 
 /******************************************************************************/
@@ -103,74 +130,6 @@ public:
     int addImg( const lv_img_dsc_t *lv_img, bool immediate=false);
 
 };
-
-
-
-
-/******************************************************************************/
-/* This class is a UI component                                               */
-/* @category:    User Interface -> Widget -> Component                        */
-/******************************************************************************/
-class ClockWheelPictureComponent : public PictureComponent{
-private:
-    bool  day_night;
-public:
-    ClockWheelPictureComponent( void * screen, const lv_img_dsc_t *day, const lv_img_dsc_t *night);
-
-    int setDayNight( bool day_night);
-
-};
-
-
-
-/******************************************************************************/
-/* This class is a UI component                                               */
-/* @category:    User Interface -> Widget -> Component                        */
-/******************************************************************************/
-class ClockWheelComponent:public UIComponent{
-private:
-    lv_obj_t * screen;
-    lv_obj_t * obj;
-    u16        angle;
-    lv_color_t color[2];
-
-public:
-    ClockWheelComponent( void * screen, u16 diameter, u16 width);
-
-    int init( u16 diameter, u16 width);
-    int setRatio( u32 tick_deg);
-    int setColor( u32 color1, u32 color2 );
-    int setColor( lv_color_t color1, lv_color_t color2 );
-
-    int increaseTick( u32 tick);
-    int increase( void);
-    int setAngle( u16 deg);
-
-friend class ClockWheel;
-};
-
-
-
-/******************************************************************************/
-/* This class will present a clock on screen in the manner of wheels          */
-/* @category:    User Interface -> Widget                                     */
-/******************************************************************************/
-class ClockWheel{
-private:
-    ClockWheelComponent           ccSecond;
-    ClockWheelComponent           ccMinute;
-    ClockWheelComponent           ccHour;
-    ClockWheelPictureComponent    ccDayIcon;
-    u32 tick;
-    bool am_pm;
-public:
-    ClockWheel( void * screen);
-    int init( void);
-    int increaseTick( u32 tick );
-    int setTime( bool am_pm, u8 hour, u8 minute, u8 second );
-    int setDayNight( bool day_night);
-};
-
 
 
 

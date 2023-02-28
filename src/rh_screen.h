@@ -75,6 +75,8 @@ int rh_screen__scan_mode  ( E_ScreenScanMode_t arg);
 /******************************************************************************/
 
 /* Includes ----------------------------------------------------------------- */
+#include "rh_common.h"
+#include "rh_config.h"
 #include "lvgl.h"
 
 
@@ -85,6 +87,11 @@ extern "C"{
 /* API functions ------------------------------------------------------------ */
 int  rhlv_screen__init     ( void);
 void rhlv_screen__flush_cb ( struct _lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p);
+
+
+#if RH_CFG_RTOS_ENABLE==0   /* Only for bare metal development */
+int rhlv_screen__init(void);
+#endif
 
 #ifdef __cplusplus
 }

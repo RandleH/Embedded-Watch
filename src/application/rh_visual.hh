@@ -92,8 +92,7 @@ class PictureComponent:public UIComponent{
 protected:
     lv_obj_t *obj;
     std::vector<const lv_img_dsc_t*> asset;
-    u32        tick;
-    u32        ratioTick;
+
 public:
     PictureComponent( void * screen, const lv_img_dsc_t *lv_img[], size_t nItems);
     PictureComponent( void * screen );
@@ -103,7 +102,6 @@ public:
     int addImg( const lv_img_dsc_t *lv_img[], size_t nItems);
     int addImg( const lv_img_dsc_t *lv_img, bool immediate=false);
 
-    int increaseTick( u32 tick );
 };
 
 
@@ -164,11 +162,13 @@ private:
     ClockWheelComponent           ccHour;
     ClockWheelPictureComponent    ccDayIcon;
     u32 tick;
+    bool am_pm;
 public:
     ClockWheel( void * screen);
     int init( void);
     int increaseTick( u32 tick );
     int setTime( bool am_pm, u8 hour, u8 minute, u8 second );
+    int setDayNight( bool day_night);
 };
 
 

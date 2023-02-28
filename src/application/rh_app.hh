@@ -26,7 +26,7 @@
 #include <task.h>
 #include <event_groups.h>
 #include "rh_common.h"
-#include "ui/rh_visual.hh"
+#include "application/rh_visual.hh"
 
 
 

@@ -41,7 +41,7 @@
 #include "rh_test.h"                  /* Unit Test Experiments */ 
 
 #include "application/rh_app.hh"
-#include "ui/rh_visual.hh"            /* Application Module */
+
 
 
 #include <CMSIS_RTOS_V2/cmsis_os2.h>

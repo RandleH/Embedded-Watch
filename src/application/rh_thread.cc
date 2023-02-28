@@ -100,6 +100,15 @@ RH_STATIC void __task_747842( void* tick){
 
         app.gui.uiClockWheel.increaseTick( (tickRemainder+deltaUserTick*3)/125 );
         tickRemainder = (tickRemainder+deltaUserTick*3)%125;
+        
+        // Only 06:30~18:00 will be recognized as Day
+        if( ( app.resource.time.bit.hour==6 && app.resource.time.bit.minute>=30 )
+            ||
+            (app.resource.time.bit.hour >6 && app.resource.time.bit.hour<18     )){
+            app.gui.uiClockWheel.setDayNight( false);
+        }else{
+            app.gui.uiClockWheel.setDayNight( true);
+        }
 
         vTaskDelay(10);
     }

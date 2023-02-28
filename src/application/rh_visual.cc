@@ -21,8 +21,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include <cstddef>
 #include <utility>
-#include "ui/rh_visual.hh"
-#include "ui/rh_asset.h"
+#include "application/rh_visual.hh"
+#include "application/rh_asset.h"
 #include "rh_color.h"
 
 
@@ -35,14 +35,14 @@ namespace rh{
 #define CLOCKWHEEL_START_ANGLE      (270)
 #define CLOCKWHEEL_END_ANGLE        (270+360)
 
-#define COLOR_SECOND_DK             M_COLOR_DARKOLIVEGREEN
-#define COLOR_SECOND_LT             M_COLOR_LAWNGREEN
+#define COLOR_SECOND_DK             RH_COLOR_MAKE( 126,  48,  93)
+#define COLOR_SECOND_LT             RH_COLOR_MAKE( 237,  29, 113)
 
-#define COLOR_MINUTE_DK             M_COLOR_SIENNA
-#define COLOR_MINUTE_LT             M_COLOR_ORANGE
+#define COLOR_MINUTE_DK             RH_COLOR_MAKE(  61, 129,  38)
+#define COLOR_MINUTE_LT             RH_COLOR_MAKE(  88, 238,  36)
 
-#define COLOR_HOUR_DK               M_COLOR_INDIGO
-#define COLOR_HOUR_LT               M_COLOR_VOILET
+#define COLOR_HOUR_DK               RH_COLOR_MAKE(  49,  53, 114)
+#define COLOR_HOUR_LT               RH_COLOR_MAKE(  70,  78, 226)
 
 
 
@@ -74,7 +74,8 @@ int Visual::load( E_VisualScreen_t scr ){
 /* This class is a UI component                                               */
 /* @category:    User Interface -> Widget -> Component                        */
 /******************************************************************************/
-UIComponent::UIComponent( void){
+UIComponent::UIComponent( void)
+:tick(0),ratioTick(1000){
     /* Do nothing */
 }
 
@@ -153,20 +154,7 @@ int PictureComponent::addImg( const lv_img_dsc_t *lv_img, bool immediate){
     return 0;
 }
 
-int PictureComponent::increaseTick( u32 tick ){
-    if( tick==0 ) return 0;
-    tick %= this->ratioTick;
-    
-    this->tick += tick;
-    if( this->tick > ratioTick ){
-        std::swap( asset[0], asset[1] );
-        this->tick -= ratioTick;
-    }
 
-    lv_img_set_src( obj, asset[0]);
-
-    return 0;
-}
 
 
 
@@ -285,7 +273,7 @@ int ClockWheelComponent::setAngle( u16 deg){
 /* @category:    User Interface -> Widget                                     */
 /******************************************************************************/
 ClockWheel::ClockWheel( void * screen):
-ccSecond(screen, 240, 20), ccMinute(screen, 200, 20), ccHour(screen, 160, 20), ccDayIcon(screen, &ui_img_sun_png, &ui_img_moon_png),tick(0){
+ccSecond(screen, 240, 20), ccMinute(screen, 200, 20), ccHour(screen, 160, 20), ccDayIcon(screen, &ui_img_sun_png, &ui_img_moon_png),tick(0),am_pm(false){
     
     lv_color_t color1, color2;
     color1.full = COLOR_HOUR_DK; color2.full = COLOR_HOUR_LT;
@@ -296,11 +284,6 @@ ccSecond(screen, 240, 20), ccMinute(screen, 200, 20), ccHour(screen, 160, 20), c
 
     color1.full = COLOR_SECOND_DK; color2.full = COLOR_SECOND_LT;
     ccSecond.setColor( color1, color2);
-
-    // ccHour.setColor( COLOR_HOUR_DK, COLOR_HOUR_LT);
-    // ccMinute.setColor( COLOR_MINUTE_DK, COLOR_MINUTE_LT);
-    // ccSecond.setColor( COLOR_SECOND_DK, COLOR_SECOND_LT);
-    
     
     ccHour.setRatio  ( 4*60*12);
     ccMinute.setRatio( 4*60);
@@ -338,7 +321,7 @@ int ClockWheel::setTime( bool am_pm, u8 hour, u8 minute, u8 second ){
         ccDayIcon.setDayNight( true);
     }
     
-
+    this->am_pm = am_pm;
     ccHour.resetTick();
     ccMinute.resetTick();
     ccSecond.resetTick();
@@ -346,7 +329,9 @@ int ClockWheel::setTime( bool am_pm, u8 hour, u8 minute, u8 second ){
     return 0;
 }
 
-
+int ClockWheel::setDayNight( bool day_night){
+    return ccDayIcon.setDayNight( day_night);
+}
 
 
 }

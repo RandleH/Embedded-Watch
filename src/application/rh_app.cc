@@ -19,26 +19,13 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "rh_app.hh"
-
-
-
-
 #include "rh_config.h"
 #include "stm32f4xx.h"
 
 #ifdef __cplusplus
 extern "C"{
 #endif
-/**
- * @brief   Timer User Application Interrupt Service Routine Function. 
- * @param   (none)
- * @retval  (none)
- * @file  "rh_timer.c"
-*/
-void RH_CFG_TIMER_USERAPP_ISRFUNC(void){
-    ++app.resource.userTick;                 
-    RH_CFG_TIMER_USERAPP->SR = ~(TIM_SR_UIF);
-}
+
 #ifdef __cplusplus
 }
 #endif

@@ -41,18 +41,25 @@ namespace rh{
 namespace widget524505{
 
 
+class ClockPanelComponent : public rh::UIComponent{
+private:
+      
+public:
+    ClockPanelComponent( void *screen);
+    friend class Widget;
+};
+
 
 /******************************************************************************/
 /* API class. Must be presented in this file                                  */
 /* @category:    User Interface -> Widget                                     */
 /******************************************************************************/
-class Widget : public rh::ClockWidget{
+class Widget final: public rh::ClockWidget{
 private:
-
-
+    lv_style_t   style;  
+    ClockPanelComponent  ccClockPanel;
 public:
     Widget( void * screen);
-    int init( void);
     int increaseTick( u32 tick );
     int setTime( bool am_pm, u8 hour, u8 minute, u8 second );
     int setDayNight( bool day_night);

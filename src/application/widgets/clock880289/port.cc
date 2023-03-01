@@ -160,7 +160,7 @@ int ClockWheelComponent::setAngle( u16 deg){
 /* @category:    User Interface -> Widget                                     */
 /******************************************************************************/
 Widget::Widget( void * screen):
-ccSecond(screen, 240, 20), ccMinute(screen, 200, 20), ccHour(screen, 160, 20), ccDayIcon(screen, &ui_img_sun_png, &ui_img_moon_png),tick(0),am_pm(false){
+rh::ClockWidget{screen},ccSecond(screen, 240, 20), ccMinute(screen, 200, 20), ccHour(screen, 160, 20), ccDayIcon(screen, &ui_img_sun_png, &ui_img_moon_png),tick(0),am_pm(false){
     
     lv_color_t color1, color2;
     color1.full = COLOR_HOUR_DK; color2.full = COLOR_HOUR_LT;
@@ -179,9 +179,6 @@ ccSecond(screen, 240, 20), ccMinute(screen, 200, 20), ccHour(screen, 160, 20), c
     ccDayIcon.setRatio( 3600*12*1440 );
 }
 
-int Widget::init( void){
-    return 0;
-}
 
 int Widget::increaseTick( u32 tick ){
     int retval = 0;

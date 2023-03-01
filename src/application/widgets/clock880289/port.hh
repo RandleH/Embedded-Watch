@@ -88,7 +88,7 @@ friend class Widget;
 /* API class. Must be presented in this file                                  */
 /* @category:    User Interface -> Widget                                     */
 /******************************************************************************/
-class Widget{
+class Widget final: public rh::ClockWidget{
 private:    
     ClockWheelComponent           ccSecond;
     ClockWheelComponent           ccMinute;
@@ -99,7 +99,6 @@ private:
 
 public:
     Widget( void * screen);
-    int init( void);
     int increaseTick( u32 tick );
     int setTime( bool am_pm, u8 hour, u8 minute, u8 second );
     int setDayNight( bool day_night);

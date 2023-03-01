@@ -72,13 +72,17 @@ int Visual::load( E_VisualScreen_t scr ){
 /* This class is a template class. All widget should inherit from this.       */
 /* @category:    User Interface                                               */
 /******************************************************************************/
-Widget::Widget( void* screen):tick(0){
+Widget::Widget( void* screen):tick(0),scr(screen){
     /* Do nothing */
 }
 
 int Widget::increaseTick( u32 tick){
     this->tick += tick;
     return 0;
+}
+
+void* Widget::getScreen(void){
+    return this->scr;
 }
 
 

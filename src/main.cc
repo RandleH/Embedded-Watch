@@ -77,9 +77,30 @@ int main( int argc, char const *argv[] ){
   rh_screen__init();
   rh_key__init();
   rh_light__init();
-  rhlv_screen__init();
+  // rhlv_screen__init();
 
-  lv_obj_t *scr = lv_obj_create(NULL);
+  lv_scr_load( (lv_obj_t*)app.gui.uiClockClassic.getScreen());
+
+  while(1){
+    if( (app.resource.userTick/1000) %2 ){
+      
+      rh_light__switch( RH_LED_IDX__BLUE, true);
+    }else{
+      rh_light__switch( RH_LED_IDX__BLUE, false);
+    }
+    app.gui.uiClockClassic.setTime( app.resource.time.bit.hour>=12, app.resource.time.bit.hour, app.resource.time.bit.minute, app.resource.time.bit.second);
+    lv_tick_inc(10);
+    lv_timer_handler();
+  }
+
+#endif
+    return 0;
+}
+
+
+
+#if 0
+lv_obj_t *scr = lv_obj_create(NULL);
 
   lv_obj_set_scrollbar_mode(scr, LV_SCROLLBAR_MODE_OFF);
 
@@ -112,17 +133,4 @@ int main( int argc, char const *argv[] ){
 
   lv_scr_load(scr);
 
-
-  while(1){
-    if( (app.resource.userTick/1000) %2 ){
-      rh_light__switch( RH_LED_IDX__BLUE, true);
-    }else{
-      rh_light__switch( RH_LED_IDX__BLUE, false);
-    }
-    lv_tick_inc(10);
-    lv_timer_handler();
-  }
-
-#endif  
-    return 0;
-}
+#endif

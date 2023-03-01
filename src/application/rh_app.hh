@@ -30,7 +30,7 @@
 
 
 #include "application/widgets/clock880289/port.hh"
-
+#include "application/widgets/clock524505/port.hh"
 
 /* Name Space ----------------------------------------------------------------*/
 namespace rh{
@@ -162,7 +162,7 @@ public:
     lv_obj_t     *screen;                       /*!< Default screen object                */
     
     rh::widget880289::Widget      uiClockWheel;         /*!< UI Widget - Clock Wheel              */
-    
+    rh::widget524505::Widget      uiClockClassic;       /*!< UI Widget - Clock Classic            */
 
 public:
     AppGUI( void);

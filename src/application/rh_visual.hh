@@ -72,9 +72,11 @@ public:
 /******************************************************************************/
 class Widget{
 protected:
-    u32      tick;
+    u32      tick;   /*!< Tick unit */
+    void    *scr;    /*!< Screen Pointer */
 public:
     Widget( void* screen);
+    void * getScreen(void);
     virtual int increaseTick( u32 tick);
 };
 

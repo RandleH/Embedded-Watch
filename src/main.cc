@@ -89,7 +89,7 @@ int main( int argc, char const *argv[] ){
       rh_light__switch( RH_LED_IDX__BLUE, false);
     }
     app.gui.uiClockClassic.setTime( app.resource.time.bit.hour>=12, app.resource.time.bit.hour, app.resource.time.bit.minute, app.resource.time.bit.second);
-    lv_tick_inc(10);
+    lv_tick_inc(1);
     lv_timer_handler();
   }
 

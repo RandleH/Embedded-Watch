@@ -72,28 +72,46 @@ public:
 /******************************************************************************/
 class Widget{
 protected:
-    u32      tick;   /*!< Tick unit */
     void    *scr;    /*!< Screen Pointer */
 public:
     Widget( void* screen);
     void * getScreen(void);
-    virtual int increaseTick( u32 tick);
+};
+
+
+/******************************************************************************/
+/* This class is a template class. All widgets should inherit from this.      */
+/* @category:    User Interface -> Widget                                     */
+/******************************************************************************/
+class ActiveWidget : public Widget{
+protected:
+    u32   tick;                 /*!< Ticks since last update */
+    u32   tickInc;              /*!< Ticks have been increased since last update */
+    bool  updated;              /*<! Internal update flag */
+public:
+    ActiveWidget( void* screen);
+    int   setTick( u32 tick);
+    int   incTick( u32 tick);
+    bool  isUpdated( void) const;
+    int   done( void);
+    int   virtual update( void) = 0;
 };
 
 
 /******************************************************************************/
 /* This class is a template class for clock widget. All clock widgets should  */
 /* inherit from this                                                          */
-/* @category:    User Interface                                               */
+/* @category:    User Interface -> Widget -> ActiveWidget                     */
 /******************************************************************************/
-class ClockWidget : public Widget{
-protected:
-    bool am_pm;                      /*!< [0]=AM; [1]=PM */
+class ClockWidget : public ActiveWidget{
 public:
     ClockWidget( void* screen);
-    virtual int setTime( bool am_pm, u8 hour, u8 minute, u8 second );
-    virtual int setDayNight( bool day_night);
+    bool isDayNight( u8 hh, u8 mm );
+    virtual int update( void) = 0;
+    virtual int setTime( u8 hh, u8 mm, u8 ss ) = 0;
 };
+
+
 
 
 

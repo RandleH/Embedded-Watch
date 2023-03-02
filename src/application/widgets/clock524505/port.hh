@@ -40,12 +40,16 @@
 namespace rh{
 namespace widget524505{
 
-
+/******************************************************************************/
+/* Private Component in Widget 524505                                         */
+/* @category:    User Interface -> Widget                                     */
+/******************************************************************************/
 class ClockPanelComponent : public rh::UIComponent{
 private:
       
 public:
-    ClockPanelComponent( void *screen);
+    ClockPanelComponent( void *screen, bool day_night);
+    void setTime( u8 hh, u8 mm, u8 ss );
     friend class Widget;
 };
 
@@ -56,12 +60,12 @@ public:
 /******************************************************************************/
 class Widget final: public rh::ClockWidget{
 private:
-    lv_style_t   style;  
+    lv_style_t           style;  
     ClockPanelComponent  ccClockPanel;
 public:
     Widget( void * screen);
-    int increaseTick( u32 tick );
-    int setTime( bool am_pm, u8 hour, u8 minute, u8 second );
+    int setTime( u8 hh, u8 mm, u8 ss );
+    int update( void);
     int setDayNight( bool day_night);
 };
 

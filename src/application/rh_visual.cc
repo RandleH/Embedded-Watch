@@ -72,13 +72,8 @@ int Visual::load( E_VisualScreen_t scr ){
 /* This class is a template class. All widget should inherit from this.       */
 /* @category:    User Interface                                               */
 /******************************************************************************/
-Widget::Widget( void* screen):tick(0),scr(screen){
+Widget::Widget( void* screen):scr(screen){
     /* Do nothing */
-}
-
-int Widget::increaseTick( u32 tick){
-    this->tick += tick;
-    return 0;
 }
 
 void* Widget::getScreen(void){
@@ -86,23 +81,61 @@ void* Widget::getScreen(void){
 }
 
 
+
+/******************************************************************************/
+/* This class is a template class. All widgets should inherit from this.      */
+/* @category:    User Interface                                               */
+/******************************************************************************/
+ActiveWidget::ActiveWidget( void* screen):Widget{screen},tick(0),tickInc(0),updated(true){
+
+}
+
+int ActiveWidget::setTick( u32 tick){
+    updated = false;
+    tickInc = 0;
+    this->tick = tick;
+    return 0;
+}
+
+int ActiveWidget::incTick( u32 tick){
+    updated = false;
+    tickInc += tick;
+    return 0;
+}
+
+bool ActiveWidget::isUpdated( void) const{
+    return updated;
+}
+
+int ActiveWidget::done( void){
+    updated  = true;
+    tick    += tickInc;
+    return 0;
+}
+
+
+
+
 /******************************************************************************/
 /* This class is a template class for clock widget. All clock widgets should  */
 /* inherit from this                                                          */
 /* @category:    User Interface                                               */
 /******************************************************************************/
-ClockWidget::ClockWidget( void* screen):Widget{screen},am_pm(true){
+ClockWidget::ClockWidget( void* screen):ActiveWidget{screen}{
     
 }
 
-int ClockWidget::setTime( bool am_pm, u8 hour, u8 minute, u8 second ){
-    this->am_pm = am_pm;
-    return 1;
+/**
+ * @class ClockWidget
+ * @param hh    - hour
+ * @param mm    - minute
+ * @brief [ 06:00 ~ 18:00 ) = true, otherwise return false.
+ *        Aka, true means day time and false means at night.
+*/
+bool ClockWidget::isDayNight( u8 hh, u8 mm ){
+    return ( (hh>6 && hh<18) || ((hh==6)&&(mm>=30)) ); 
 }
 
-int ClockWidget::setDayNight( bool day_night){
-    return 1;
-}
 
 
 

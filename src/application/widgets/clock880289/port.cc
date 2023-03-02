@@ -73,11 +73,7 @@ int ClockWheelPictureComponent::setDayNight( bool day_night){
 /* @category:    User Interface -> Widget -> Component                        */
 /******************************************************************************/
 ClockWheelComponent::ClockWheelComponent( void * screen, u16 diameter, u16 width):screen((lv_obj_t*)screen),angle(0){
-    init( diameter, width);
-}
-
-int ClockWheelComponent::init( u16 diameter, u16 width){
-    obj = lv_arc_create( screen);
+    obj = lv_arc_create( (lv_obj_t*)screen);
     lv_obj_set_width ( obj, diameter);         
     lv_obj_set_height( obj, diameter);
 
@@ -91,8 +87,6 @@ int ClockWheelComponent::init( u16 diameter, u16 width){
     lv_obj_remove_style   ( obj, NULL, LV_PART_KNOB);   /*Be sure the knob is not displayed*/
     lv_obj_clear_flag     ( obj, LV_OBJ_FLAG_CLICKABLE);  /*To not allow adjusting by click*/
     lv_obj_center( obj);
-    if(!obj) return 1; 
-    return 0;
 }
 
 int ClockWheelComponent::setRatio( u32 tick_deg){
@@ -139,9 +133,6 @@ int ClockWheelComponent::increaseTick( u32 tick){
     return 0;
 }
 
-int ClockWheelComponent::increase( void){
-    return 1;
-}
 
 int ClockWheelComponent::setAngle( u16 deg){
     deg%=360;
@@ -160,7 +151,7 @@ int ClockWheelComponent::setAngle( u16 deg){
 /* @category:    User Interface -> Widget                                     */
 /******************************************************************************/
 Widget::Widget( void * screen):
-rh::ClockWidget{screen},ccSecond(screen, 240, 20), ccMinute(screen, 200, 20), ccHour(screen, 160, 20), ccDayIcon(screen, &ui_img_sun_png, &ui_img_moon_png),tick(0),am_pm(false){
+rh::ClockWidget{screen},ccSecond(screen, 240, 20), ccMinute(screen, 200, 20), ccHour(screen, 160, 20), ccDayIcon(screen, &ui_img_sun_png, &ui_img_moon_png),tickMod(0){
     
     lv_color_t color1, color2;
     color1.full = COLOR_HOUR_DK; color2.full = COLOR_HOUR_LT;
@@ -180,32 +171,38 @@ rh::ClockWidget{screen},ccSecond(screen, 240, 20), ccMinute(screen, 200, 20), cc
 }
 
 
-int Widget::increaseTick( u32 tick ){
+int Widget::update( void){
     int retval = 0;
-    
-    retval |= ccHour.increaseTick(tick);
-    retval |= ccMinute.increaseTick(tick);
-    retval |= ccSecond.increaseTick(tick);
 
+    /******************************************************************************/
+    /* Important Notes: The following code ONLY works for these conditions        */
+    /*  - `tickInc`           - 1 tick/ms                                         */
+    /*  - `tickIncComponent`  - 1440/1000 tick/ms                                 */
+    /******************************************************************************/
+#warning "May optimize using left shift"
+    u32 tickIncComponent = ((tickMod+tickInc*3)/125);
+    
+    tickMod = (tickMod+tickInc*3)%125;
+    
+    retval |= ccHour.increaseTick(tickIncComponent);
+    retval |= ccMinute.increaseTick(tickIncComponent);
+    retval |= ccSecond.increaseTick(tickIncComponent);
+
+
+    done();
     return retval;
 }
 
-int Widget::setTime( bool am_pm, u8 hour, u8 minute, u8 second ){
+
+
+int Widget::setTime( u8 hour, u8 minute, u8 second ){
     
     ccHour.setAngle  ( hour   * 360 /12 );
     ccMinute.setAngle( minute * 360 /60 );
     ccSecond.setAngle( second * 360 /60 );
 
-    // Only 06:30~18:00 will be recognized as Day
-    if(   (    (am_pm==false)    &&    ( (hour>6) || ((hour==6)&&(minute>=30)) ) )\
-        || \
-          ((am_pm==true ) && (hour<6)) ){
-        ccDayIcon.setDayNight( false);
-    }else{
-        ccDayIcon.setDayNight( true);
-    }
+    ccDayIcon.setDayNight( isDayNight( hour, minute));
     
-    this->am_pm = am_pm;
     ccHour.resetTick();
     ccMinute.resetTick();
     ccSecond.resetTick();

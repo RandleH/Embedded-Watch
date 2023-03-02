@@ -1,0 +1,16 @@
+
+
+
+
+[2023-02-28]
+
+- Move the `increaseTick()` function to the `rh::ClockWidget` class to save memory.
+- Move the `tick` variable to the `rh::ClockWidget` class to save memory.
+
+
+- Add `isDayNight()` function to the class `rh::ClockWidget`
+
+
+
+
+

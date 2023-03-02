@@ -112,7 +112,7 @@ lvgl(),screen(lv_obj_create(NULL)), uiClockWheel(lv_obj_create(NULL)), uiClockCl
     lv_obj_set_style_bg_color ( screen, lv_color_hex(0x191919), LV_PART_MAIN | LV_STATE_DEFAULT );
     lv_obj_set_style_bg_opa   ( screen,                    255, LV_PART_MAIN | LV_STATE_DEFAULT );
 
-    uiClockWheel.setTime( app.resource.time.bit.hour>=12, app.resource.time.bit.hour, app.resource.time.bit.minute, app.resource.time.bit.second );
+    uiClockWheel.setTime( app.resource.time.bit.hour, app.resource.time.bit.minute, app.resource.time.bit.second );
 
 }
 

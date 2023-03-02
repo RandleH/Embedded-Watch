@@ -68,13 +68,11 @@ private:
 public:
     ClockWheelComponent( void * screen, u16 diameter, u16 width);
 
-    int init( u16 diameter, u16 width);
     int setRatio( u32 tick_deg);
     int setColor( u32 color1, u32 color2 );
     int setColor( lv_color_t color1, lv_color_t color2 );
 
     int increaseTick( u32 tick);
-    int increase( void);
     int setAngle( u16 deg);
 
 friend class Widget;
@@ -94,14 +92,13 @@ private:
     ClockWheelComponent           ccMinute;
     ClockWheelComponent           ccHour;
     ClockWheelPictureComponent    ccDayIcon;
-    u32 tick;
-    bool am_pm;
+    u32    tickMod;
 
 public:
     Widget( void * screen);
-    int increaseTick( u32 tick );
-    int setTime( bool am_pm, u8 hour, u8 minute, u8 second );
+    int setTime( u8 hour, u8 minute, u8 second );
     int setDayNight( bool day_night);
+    int update( void);
 };
 
 

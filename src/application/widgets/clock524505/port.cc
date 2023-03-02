@@ -31,18 +31,18 @@
 #include "./lv_analogclock.h"
 
 /* Private define ------------------------------------------------------------*/
-#define COLOR_MINUTE_TICK           lv_color_hex(0x006b6b6b)
-#define COLOR_HOUR_TICK             lv_color_hex(0x00ffffff)
+#define COLOR_MINUTE_TICK(cmd)           (cmd==true)?lv_color_hex(0x006b6b6b) : lv_color_hex(0x006b6b6b) 
+#define COLOR_HOUR_TICK(cmd)             (cmd==true)?lv_color_hex(0x00ffffff) : lv_color_hex(0x00ffffff) 
 
-#define LEN_MINUTE_TICK             (10)
-#define LEN_HOUR_TICK               (13)
+#define LEN_MINUTE_TICK             (15)
+#define LEN_HOUR_TICK               (20)
 
-#define WIDTH_MINUTE_TICK           (3)
-#define WIDTH_HOUR_TICK             (3)
+#define WIDTH_MINUTE_NEEDLE           (3)
+#define WIDTH_HOUR_NEEDLE             (3)
 
-#define COLOR_MINUTE_NEEDLE         lv_color_hex(0x00ffffff)
-#define COLOR_HOUR_NEEDLE           lv_color_hex(0x00ffffff)
-#define COLOR_SECOND_NEEDLE         lv_color_hex(0x00ff0029)
+#define COLOR_MINUTE_NEEDLE(cmd)         (cmd==true)?lv_color_hex(0x00ffffff) : lv_color_hex(0x00ffffff) 
+#define COLOR_HOUR_NEEDLE(cmd)           (cmd==true)?lv_color_hex(0x00ffffff) : lv_color_hex(0x00ffffff) 
+#define COLOR_SECOND_NEEDLE(cmd)         (cmd==true)?lv_color_hex(0x00ff0029) : lv_color_hex(0x00ff0029) 
 
 
 /* Namespace -----------------------------------------------------------------*/
@@ -52,18 +52,20 @@ namespace widget524505{
 
 
 
-ClockPanelComponent::ClockPanelComponent( void* screen){
+ClockPanelComponent::ClockPanelComponent( void* screen, bool day_night){
     /* Create the object */
     obj = lv_analogclock_create( (lv_obj_t*)screen);
     lv_obj_set_pos(obj, 0, 0);                  /* No XY offset */
     lv_obj_set_size(obj, 240, 240);             /* Full screen display */
     lv_analogclock_hide_digits(obj, false);     /* Display clock number */
-    lv_analogclock_set_major_ticks(obj, WIDTH_HOUR_TICK  , LEN_HOUR_TICK  , COLOR_HOUR_TICK  , 10);       /* Hour Tick */
-    lv_analogclock_set_ticks      (obj, WIDTH_MINUTE_TICK, LEN_MINUTE_TICK, COLOR_MINUTE_TICK);           /* Minute Tick */
 
-    lv_analogclock_set_hour_needle_line(obj, 5, COLOR_HOUR_NEEDLE  , -56);
-    lv_analogclock_set_min_needle_line (obj, 5, COLOR_MINUTE_NEEDLE, -30);
-    lv_analogclock_set_sec_needle_line (obj, 2, COLOR_SECOND_NEEDLE, -10);
+    
+    lv_analogclock_set_major_ticks(obj, WIDTH_HOUR_NEEDLE  , LEN_HOUR_TICK  , COLOR_HOUR_TICK(day_night)  , 20);       /* Hour Tick */
+    lv_analogclock_set_ticks      (obj, WIDTH_MINUTE_NEEDLE, LEN_MINUTE_TICK, COLOR_MINUTE_TICK(day_night));           /* Minute Tick */
+
+    lv_analogclock_set_hour_needle_line(obj, 5, COLOR_HOUR_NEEDLE(day_night)  , -56);
+    lv_analogclock_set_min_needle_line (obj, 5, COLOR_MINUTE_NEEDLE(day_night), -30);
+    lv_analogclock_set_sec_needle_line (obj, 2, COLOR_SECOND_NEEDLE(day_night), -10);
     
     
     lv_analogclock_set_time( obj, app.resource.time.bit.hour  ,\
@@ -72,12 +74,16 @@ ClockPanelComponent::ClockPanelComponent( void* screen){
 
 }
 
+void ClockPanelComponent::setTime( u8 hh, u8 mm, u8 ss){
+    lv_analogclock_set_time( obj, hh, mm, ss);
+}
+
 
 /******************************************************************************/
 /* API class. Must be presented in this file                                  */
 /* @category:    User Interface -> Widget                                     */
 /******************************************************************************/
-Widget::Widget( void * screen):rh::ClockWidget{screen},ccClockPanel{screen}{
+Widget::Widget( void * screen):rh::ClockWidget{screen},ccClockPanel{screen, isDayNight( app.resource.time.bit.hour, app.resource.time.bit.minute )}{
     /* Config screen */
     lv_obj_set_scrollbar_mode( (lv_obj_t*)screen, LV_SCROLLBAR_MODE_OFF);
     
@@ -89,19 +95,29 @@ Widget::Widget( void * screen):rh::ClockWidget{screen},ccClockPanel{screen}{
     lv_obj_add_style((lv_obj_t*)screen, &style, LV_PART_MAIN|LV_STATE_DEFAULT);
 }
 
-int Widget::increaseTick( u32 tick){
+
+int Widget::setTime( u8 hh, u8 mm, u8 ss ){
+    if( hh>=24 || mm>=60 || ss>=60 ) return 1;
+    ccClockPanel.setTime( hh, mm, ss);
+    
     return 0;
 }
 
-int Widget::setTime( bool am_pm, u8 hour, u8 minute, u8 second ){
-    if( hour>=24 || minute>=60 || second>=60 ) return 1;
+/**
+ * @class rh::widget524505::Widget
+ * @brief 
+*/
+int Widget::update( void){
 
+#warning "Need to be fixed!!! It actually do NOT have the permission to access global resource"
+
+    setTime( app.resource.time.bit.hour, app.resource.time.bit.minute, app.resource.time.bit.second );
     
-    lv_analogclock_set_time( ccClockPanel.obj, hour, minute, second);
-    return 0;
+    return done();;
 }
     
 int Widget::setDayNight( bool day_night){
+    
     return 0;
 }
 

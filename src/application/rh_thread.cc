@@ -82,8 +82,8 @@ RH_STATIC void __task_264978( void*){
 */
 RH_STATIC void __task_747842( void* tick){
 
-    u32 lastUserTick  = app.resource.userTick;   /*!< User tick record int the previous round */
-    u32 tickRemainder = 0;                       /*!< Remainder of tick counts. Mutiplied by 3 in order to preserve accuracy */
+    // u32 lastUserTick  = app.resource.userTick;   /*!< User tick record int the previous round */
+    // u32 tickRemainder = 0;                       /*!< Remainder of tick counts. Mutiplied by 3 in order to preserve accuracy */
     while(1){
 
         /******************************************************************************/
@@ -91,24 +91,26 @@ RH_STATIC void __task_747842( void* tick){
         /*  - User Tick from `app` is in 1KHz frequency modulation                    */
         /*  - UI Tick for `uiCLockWheel` is in 1440 ticks per minute                  */
         /******************************************************************************/
-        u32 deltaUserTick = 0; 
-        {
-            u32 tmp = app.resource.userTick;
-            deltaUserTick = tmp - lastUserTick;
-            lastUserTick  = tmp;
-        }
-
-        app.gui.uiClockWheel.increaseTick( (tickRemainder+deltaUserTick*3)/125 );
-        tickRemainder = (tickRemainder+deltaUserTick*3)%125;
         
-        // Only 06:30~18:00 will be recognized as Day
-        if( ( app.resource.time.bit.hour==6 && app.resource.time.bit.minute>=30 )
-            ||
-            (app.resource.time.bit.hour >6 && app.resource.time.bit.hour<18     )){
-            app.gui.uiClockWheel.setDayNight( false);
-        }else{
-            app.gui.uiClockWheel.setDayNight( true);
-        }
+#warning "Need to be fixed!!!"        
+        // u32 deltaUserTick = 0; 
+        // {
+        //     u32 tmp = app.resource.userTick;
+        //     deltaUserTick = tmp - lastUserTick;
+        //     lastUserTick  = tmp;
+        // }
+
+        // app.gui.uiClockWheel.increaseTick( (tickRemainder+deltaUserTick*3)/125 );
+        // tickRemainder = (tickRemainder+deltaUserTick*3)%125;
+        
+        // // Only 06:30~18:00 will be recognized as Day
+        // if( ( app.resource.time.bit.hour==6 && app.resource.time.bit.minute>=30 )
+        //     ||
+        //     (app.resource.time.bit.hour >6 && app.resource.time.bit.hour<18     )){
+        //     app.gui.uiClockWheel.setDayNight( false);
+        // }else{
+        //     app.gui.uiClockWheel.setDayNight( true);
+        // }
 
         vTaskDelay(10);
     }

@@ -78,8 +78,14 @@ int main( int argc, char const *argv[] ){
   rh_key__init();
   rh_light__init();
   // rhlv_screen__init();
+ 
+  u32 tmp = app.resource.userTick;
+  
+  app.gui.uiClockClassic.setTick( app.resource.userTick );
 
   lv_scr_load( (lv_obj_t*)app.gui.uiClockClassic.getScreen());
+
+  
 
   while(1){
     if( (app.resource.userTick/1000) %2 ){
@@ -88,7 +94,13 @@ int main( int argc, char const *argv[] ){
     }else{
       rh_light__switch( RH_LED_IDX__BLUE, false);
     }
-    app.gui.uiClockClassic.setTime( app.resource.time.bit.hour>=12, app.resource.time.bit.hour, app.resource.time.bit.minute, app.resource.time.bit.second);
+
+    app.gui.uiClockClassic.incTick( app.resource.userTick-tmp );
+    
+    app.gui.uiClockClassic.update();
+
+    
+
     lv_tick_inc(1);
     lv_timer_handler();
   }

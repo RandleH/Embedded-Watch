@@ -95,6 +95,8 @@ lv_analogclock_scale_t * lv_analogclock_add_scale(lv_obj_t * obj)
     scale->tick_major_length = 12;
     // scale->tick_major_color = color;
 
+    scale->label_color = 0xffff;
+
     scale->min = 0;
     scale->max = 60;
     scale->rotation = 270;

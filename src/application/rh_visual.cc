@@ -77,7 +77,7 @@ Widget::Widget( void* screen):scr(screen){
 }
 
 void* Widget::getScreen(void){
-    return this->scr;
+    return scr;
 }
 
 
@@ -110,6 +110,7 @@ bool ActiveWidget::isUpdated( void) const{
 int ActiveWidget::done( void){
     updated  = true;
     tick    += tickInc;
+    tickInc  = 0;
     return 0;
 }
 
@@ -149,13 +150,20 @@ UIComponent::UIComponent( void)
     /* Do nothing */
 }
 
-UIComponent::UIComponent( void* screen):tick(0),ratioTick(1000){
-    obj = lv_obj_create( (lv_obj_t*)screen);
-}
+
 
 int UIComponent::resetTick( void){
     this->tick = 0;
     return 0;
+}
+
+int UIComponent::setRatio( u32 value){
+    this->ratioTick = value;
+    return 0;
+}
+
+u32 UIComponent::getRatio( void){
+    return ratioTick;
 }
 
 
@@ -182,11 +190,6 @@ PictureComponent::PictureComponent( void * screen, const lv_img_dsc_t *lv_img[],
 PictureComponent::PictureComponent( void * screen ){
     obj = lv_img_create(((lv_obj_t*)screen));
     lv_img_set_src(obj, NULL);
-}
-
-int PictureComponent::setRatio( u32 tick){
-    ratioTick = tick;
-    return 0;
 }
 
 int PictureComponent::addImg( const lv_img_dsc_t *lv_img[], size_t nItems){
@@ -225,5 +228,9 @@ int PictureComponent::addImg( const lv_img_dsc_t *lv_img, bool immediate){
 }
 
 
+
+int PictureComponent::setTick( u32 tick){
+    return 0;
+}
 
 }

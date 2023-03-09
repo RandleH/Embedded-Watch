@@ -38,17 +38,15 @@
 #if RH_CFG_RTOS_ENABLE==1
 
 #else
+# include "rh_light.h"                 /* BSP Package */
+# include "rh_screen.h"
+# include "rh_flash.h"
+# include "rh_key.h"
+# include "rh_rtc.h"
 
-#include "rh_light.h"                 /* BSP Package */
-#include "rh_screen.h"
-#include "rh_flash.h"
-#include "rh_key.h"
+# include "rh_test.h"                  /* Unit Test Experiments */ 
 
-
-#include "rh_test.h"                  /* Unit Test Experiments */ 
-
-#include "application/widgets/clock524505/lv_analogclock.h"
-
+# include "application/widgets/clock524505/lv_analogclock.h"
 #endif
 
 
@@ -65,6 +63,7 @@ int main( int argc, char const *argv[] ){
   HAL_Init();
   HAL_NVIC_SetPriorityGrouping( NVIC_PRIORITYGROUP_4);
   rh_clock__init( 25, 192, 2, 4);
+  // rh_rtc__init( false, 1970, 1,1,0,0,0, 1);
   rh_timer__init();
   rh_debug__init();
 #if RH_CFG_RTOS_ENABLE==1 //////////////////////////////////////////////////
@@ -77,72 +76,53 @@ int main( int argc, char const *argv[] ){
   rh_screen__init();
   rh_key__init();
   rh_light__init();
-  // rhlv_screen__init();
+  
+  
  
   u32 tmp = app.resource.userTick;
   
-  app.gui.uiClockClassic.setTick( app.resource.userTick );
+  
+  void*  list[] = { &app.gui.uiClockClassic, &app.gui.uiClockWheel};
+  rh::ClockWidget  *pClkWidget = &app.gui.uiClockClassic;
 
-  lv_scr_load( (lv_obj_t*)app.gui.uiClockClassic.getScreen());
+  pClkWidget->setTick( 0 );
+  lv_scr_load( (lv_obj_t*)pClkWidget->getScreen());
 
   
-
+  pClkWidget->setTime( app.resource.time.bit.hour, app.resource.time.bit.minute, app.resource.time.bit.second );
+  
+  app.gui.uiClockLouisVuitton.foo();
+  
   while(1){
-    if( (app.resource.userTick/1000) %2 ){
-      
-      rh_light__switch( RH_LED_IDX__BLUE, true);
-    }else{
-      rh_light__switch( RH_LED_IDX__BLUE, false);
-    }
 
-    app.gui.uiClockClassic.incTick( app.resource.userTick-tmp );
+    // if( key0==true ){
+    //   if( RH_KEY__B==rh_key__read() ){    
+    //     rh_light__toggle( RH_LED_IDX__BLUE);
+    //     std::swap( list[0], list[1]);
+    //     pClkWidget = (rh::ClockWidget*)list[0];
+
+    //     pClkWidget->setTime( app.resource.time.bit.hour, app.resource.time.bit.minute, app.resource.time.bit.second);
+    //     lv_scr_load( (lv_obj_t*)pClkWidget->getScreen() );
+    //   }
+    //   key0 = false;
+    // }
+
+    // {
+    //   u32 tmpVolatile = app.resource.userTick;
+    //   pClkWidget->incTick( tmpVolatile-tmp );
+    //   tmp = tmpVolatile;
+    // }
+
+    // pClkWidget->update();
     
-    app.gui.uiClockClassic.update();
-
     
-
-    lv_tick_inc(1);
+    lv_tick_inc(10);
     lv_timer_handler();
   }
 
 #endif
-    return 0;
+  return 0;
 }
 
 
 
-#if 0
-lv_obj_t *scr = lv_obj_create(NULL);
-
-  lv_obj_set_scrollbar_mode(scr, LV_SCROLLBAR_MODE_OFF);
-
-	//Write style state: LV_STATE_DEFAULT for style_screen_main_main_default
-	static lv_style_t style_screen_main_main_default;
-	if (style_screen_main_main_default.prop_cnt > 1)
-		lv_style_reset(&style_screen_main_main_default);
-	else
-		lv_style_init(&style_screen_main_main_default);
-	lv_style_set_bg_color(&style_screen_main_main_default, lv_color_make(0x0d, 0x0d, 0x0d));
-	lv_style_set_bg_opa(&style_screen_main_main_default, 255);
-	lv_obj_add_style(scr, &style_screen_main_main_default, LV_PART_MAIN|LV_STATE_DEFAULT);
-	static bool screen_uiClassicClock_timer_enabled = false;
-
-  lv_obj_t *obj = lv_analogclock_create( (lv_obj_t*)scr);
-  
-  static int screen_uiClassicClock_hour_value = 4;
-  static int screen_uiClassicClock_min_value = 20;
-  static int screen_uiClassicClock_sec_value = 50;
-
-  lv_obj_set_pos(obj, 0, 0);
-	lv_obj_set_size(obj, 240, 240);
-	lv_analogclock_hide_digits(obj, false);
-	lv_analogclock_set_major_ticks(obj, 2, 13, lv_color_make(0xff, 0xff, 0xff), 10);
-	lv_analogclock_set_ticks(obj, 2, 10, lv_color_make(0x6b, 0x6b, 0x6b));
-	lv_analogclock_set_hour_needle_line(obj, 5, lv_color_make(0xff, 0xff, 0xff), -56);
-	lv_analogclock_set_min_needle_line(obj, 5, lv_color_make(0xff, 0xff, 0xff), -30);
-	lv_analogclock_set_sec_needle_line(obj, 2, lv_color_make(0xff, 0x00, 0x27), -10);
-	lv_analogclock_set_time(obj, screen_uiClassicClock_hour_value, screen_uiClassicClock_min_value, screen_uiClassicClock_sec_value);
-
-  lv_scr_load(scr);
-
-#endif

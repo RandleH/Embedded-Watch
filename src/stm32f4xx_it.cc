@@ -235,11 +235,18 @@ void RH_CFG_TIMER_USERAPP_ISRFUNC(void){
 
 
 void RTC_WKUP_IRQHandler(void){
-
+  if (RTC->ISR & (1 << 10)){   /* WK_UP中断? */
+    RTC->ISR &= ~(1 << 10);    /* 清除中断标志 */     
+  }
+  EXTI->PR |= 1 << 19;         /* 清除中断线19的中断标志 */
 }
 
 void RTC_Alarm_IRQHandler(void){
-  
+  if (RTC->ISR & (1 << 8)){    /* ALARM A中断? */
+    RTC->ISR &= ~(1 << 8);  /* 清除中断标志 */
+        
+  }
+  EXTI->PR |= 1 << 17;        /* 清除中断线17的中断标志 */
 }
 
 #ifdef __cplusplus

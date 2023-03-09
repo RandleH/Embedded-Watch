@@ -107,7 +107,10 @@ gram1{0},gram2{0}{
 /* @uniqueID:    914842                                                       */
 /******************************************************************************/
 AppGUI::AppGUI( void):
-lvgl(),screen(lv_obj_create(NULL)), uiClockWheel(lv_obj_create(NULL)), uiClockClassic(lv_obj_create(NULL)){
+lvgl(),screen(lv_obj_create(NULL)), 
+uiClockWheel(lv_obj_create(NULL)), 
+uiClockClassic(lv_obj_create(NULL)),
+uiClockLouisVuitton(lv_obj_create(NULL)){
 
     lv_obj_set_style_bg_color ( screen, lv_color_hex(0x191919), LV_PART_MAIN | LV_STATE_DEFAULT );
     lv_obj_set_style_bg_opa   ( screen,                    255, LV_PART_MAIN | LV_STATE_DEFAULT );

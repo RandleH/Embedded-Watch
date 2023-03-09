@@ -121,13 +121,15 @@ public:
 /******************************************************************************/
 class UIComponent{
 protected:
-    lv_obj_t *obj;
+    lv_obj_t  *obj;
     u32        tick;
     u32        ratioTick;
 public:
     UIComponent( void);
     UIComponent( void * screen );
     int resetTick( void);
+    int setRatio( u32 value);
+    u32 getRatio( void);
 };
 
 
@@ -143,12 +145,11 @@ protected:
 public:
     PictureComponent( void * screen, const lv_img_dsc_t *lv_img[], size_t nItems);
     PictureComponent( void * screen );
-
-    int setRatio( u32 tick);
-
+    
     int addImg( const lv_img_dsc_t *lv_img[], size_t nItems);
     int addImg( const lv_img_dsc_t *lv_img, bool immediate=false);
-
+    
+    int setTick( u32 tick);
 };
 
 

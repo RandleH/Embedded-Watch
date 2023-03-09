@@ -156,14 +156,14 @@ int rh_debug__init  ( void){
 
 
 /**
- * @brief   Debug printf function. This function will do nothing if `CFG_DEBUG__ENABLE` is set 0.
+ * @brief   Debug printf function. This function will do nothing if `RH_CFG_DEBUG_ENABLE_PRINTF` is set 0.
  * @param   fmt  Formatted string with va_list
  * @retval  If success, return 0.
  *          Return 1 if buffer overflow.
  *          Return 2 if communication time out.
 */
 int rh_debug__printf( const char * fmt, ...){
-#if CFG_DEBUG__ENABLE     
+#if RH_CFG_DEBUG_ENABLE_PRINTF     
     static char tmp[256] = {0};
 
     va_list ap;

@@ -33,6 +33,11 @@
 #define PORT_524505_H
 
 
+#define OPT_FORWARD      0
+#define OPT_SET          1
+#define OPT_RESET        2
+#define OPT_BACKWARD     4
+
 
 
 
@@ -40,17 +45,76 @@
 namespace rh{
 namespace widget524505{
 
+
+
+/******************************************************************************/
+/* Private Component in Widget 524505                                         */
+/* @category:    User Interface -> Widget                                     */
+/******************************************************************************/
+class ClockNeedleComponent{
+private:
+    lv_obj_t  *_obj;
+    lv_style_t _style;            /*!< Line style for main part such as width and color */
+    u8         _len;              /*!< Length of the needle */
+    u8         _offset;           /*!< Length of other side of the needle */
+    u32        _tick;             /*<! Current tick count */
+    lv_point_t _point[2];         /*!< End point coordinate of needle */
+    u32        _ratio;            /*!< Systick tick vs. Needle Move Step */
+
+    void       updateAngle( void);
+public:
+    ClockNeedleComponent( void* screen, u8 len, u8 offset, u8 width, bool rounded, lv_color_t color);
+
+    void  run( u32 tick, int OPT_XXXX );
+
+    void  hide( bool cmd);
+
+    u32   ratio( void);
+    void  ratio( u32 val);
+
+    u8    length( void);
+    void  length( u8 val);
+
+    u8    width( void);
+    void  width( u8 val);
+
+    u8    offset( void);
+    void  offset( u8 val);
+};
+
+
+/******************************************************************************/
+/* Private Component in Widget 524505                                         */
+/* @category:    User Interface -> Widget                                     */
+/******************************************************************************/
+class ClockNeedleKnobComponent : public rh::UIComponent{
+private:
+
+public:
+    ClockNeedleKnobComponent( void* screen, u8 radius, u8 width, lv_color_t color);
+    void hide( bool cmd);
+
+    u8    width( void);
+    void  width( u8 val);
+
+    u8    radius( void);
+    void  radius( u8 val);
+
+    lv_color_t   color( void);
+    void         color( lv_color_t val);
+};
+
+
 /******************************************************************************/
 /* Private Component in Widget 524505                                         */
 /* @category:    User Interface -> Widget                                     */
 /******************************************************************************/
 class ClockPanelComponent : public rh::UIComponent{
 private:
-      
+    lv_style_t style;         
 public:
     ClockPanelComponent( void *screen, bool day_night);
-    void setTime( u8 hh, u8 mm, u8 ss );
-    friend class Widget;
+    void hide( bool cmd);
 };
 
 
@@ -60,13 +124,17 @@ public:
 /******************************************************************************/
 class Widget final: public rh::ClockWidget{
 private:
-    lv_style_t           style;  
-    ClockPanelComponent  ccClockPanel;
+    lv_style_t               style;  
+    ClockPanelComponent      ccClockPanel;
+    ClockNeedleComponent     ccNeedleSecond;
+    ClockNeedleComponent     ccNeedleMinute;
+    ClockNeedleComponent     ccNeedleHour;
+    ClockNeedleKnobComponent ccNeedleKnob;
+
 public:
     Widget( void * screen);
     int setTime( u8 hh, u8 mm, u8 ss );
     int update( void);
-    int setDayNight( bool day_night);
 };
 
 

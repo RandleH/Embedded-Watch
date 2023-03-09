@@ -133,6 +133,10 @@ int ClockWheelComponent::increaseTick( u32 tick){
     return 0;
 }
 
+int ClockWheelComponent::setTick( u32 tick){
+    return 0;
+}
+
 
 int ClockWheelComponent::setAngle( u16 deg){
     deg%=360;
@@ -151,7 +155,7 @@ int ClockWheelComponent::setAngle( u16 deg){
 /* @category:    User Interface -> Widget                                     */
 /******************************************************************************/
 Widget::Widget( void * screen):
-rh::ClockWidget{screen},ccSecond(screen, 240, 20), ccMinute(screen, 200, 20), ccHour(screen, 160, 20), ccDayIcon(screen, &ui_img_sun_png, &ui_img_moon_png),tickMod(0){
+rh::ClockWidget{screen},ccSecond(screen, 240, 20), ccMinute(screen, 200, 20), ccHour(screen, 160, 20), ccDayIcon(screen, &ui_img_sun_png, &ui_img_moon_png),tickMod(0),style{0}{
     
     lv_color_t color1, color2;
     color1.full = COLOR_HOUR_DK; color2.full = COLOR_HOUR_LT;
@@ -165,9 +169,15 @@ rh::ClockWidget{screen},ccSecond(screen, 240, 20), ccMinute(screen, 200, 20), cc
     
     ccHour.setRatio  ( 4*60*12);
     ccMinute.setRatio( 4*60);
-    ccSecond.setRatio( 4);  
+    ccSecond.setRatio( 4);
 
     ccDayIcon.setRatio( 3600*12*1440 );
+
+    lv_style_reset( &style);
+    lv_style_init( &style);
+    lv_style_set_bg_color(&style, lv_color_make(0x0d, 0x0d, 0x0d));
+    lv_style_set_bg_opa(&style, 255);
+    lv_obj_add_style((lv_obj_t*)screen, &style, LV_PART_MAIN|LV_STATE_DEFAULT);
 }
 
 
@@ -180,17 +190,16 @@ int Widget::update( void){
     /*  - `tickIncComponent`  - 1440/1000 tick/ms                                 */
     /******************************************************************************/
 #warning "May optimize using left shift"
-    u32 tickIncComponent = ((tickMod+tickInc*3)/125);
-    
-    tickMod = (tickMod+tickInc*3)%125;
-    
+    u32 tmp = (tickMod+(tickInc<<1)+tickInc);
+
+    u32 tickIncComponent = tmp<125? tmp>>7 : tmp/125;
+    tickMod              = tmp%125;
+
     retval |= ccHour.increaseTick(tickIncComponent);
     retval |= ccMinute.increaseTick(tickIncComponent);
     retval |= ccSecond.increaseTick(tickIncComponent);
 
-
-    done();
-    return retval;
+    return retval | done();
 }
 
 

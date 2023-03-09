@@ -31,6 +31,7 @@
 
 #include "application/widgets/clock880289/port.hh"
 #include "application/widgets/clock524505/port.hh"
+#include "application/widgets/clock454570/port.hh"
 
 /* Name Space ----------------------------------------------------------------*/
 namespace rh{
@@ -163,11 +164,12 @@ public:
     
     rh::widget880289::Widget      uiClockWheel;         /*!< UI Widget - Clock Wheel              */
     rh::widget524505::Widget      uiClockClassic;       /*!< UI Widget - Clock Classic            */
-
+    rh::widget454570::Widget      uiClockLouisVuitton;  
 public:
     AppGUI( void);
     int load( void);
 
+    
 };
 
 

@@ -65,6 +65,7 @@ extern "C" {
 
 
 /* Debug Config --------------------------------------------------------------*/
+#define RH_CFG_DEBUG_ENABLE_PRINTF            1                             // < select > < 0=disable : 1=enable >
 #define RH_CFG_DEBUG_TITLE_WARNING            "[WARNING]"
 #define RH_CFG_DEBUG_TITLE_ERROR              "[ERROR]"
 #define RH_CFG_DEBUG_TITLE_LOG                "[LOG]"
@@ -73,7 +74,7 @@ extern "C" {
 #define RH_CFG_DEBUG_WARNING_MASSEGE_ENABLE   (1)                           // < select > < 0=disable : 1=enable >
 #define RH_CFG_DEBUG_LOG_MASSEGE_ENABLE       (1)                           // < select > < 0=disable : 1=enable >
 
-#define RH_CFG_DEBUG_BAUDRATE                 (921600U)                     // < select >
+#define RH_CFG_DEBUG_BAUDRATE                 (115200U)                     // < select >
 
 
 

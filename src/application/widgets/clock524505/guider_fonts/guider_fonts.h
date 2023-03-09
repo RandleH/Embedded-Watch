@@ -16,7 +16,7 @@ extern "C" {
 #endif
 
 LV_FONT_DECLARE(lv_font_montserratMedium_12)
-
+LV_FONT_DECLARE(lv_font_montserratMedium_16)
 
 #ifdef __cplusplus
 }

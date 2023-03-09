@@ -74,7 +74,8 @@ public:
 
     int increaseTick( u32 tick);
     int setAngle( u16 deg);
-
+    
+    int setTick( u32 tick);
 friend class Widget;
 };
 
@@ -93,7 +94,8 @@ private:
     ClockWheelComponent           ccHour;
     ClockWheelPictureComponent    ccDayIcon;
     u32    tickMod;
-
+    
+    lv_style_t                    style;
 public:
     Widget( void * screen);
     int setTime( u8 hour, u8 minute, u8 second );

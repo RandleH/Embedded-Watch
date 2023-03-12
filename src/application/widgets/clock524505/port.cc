@@ -20,11 +20,10 @@
 
 
 /* Includes ------------------------------------------------------------------*/
-#include <cmath>
-
 #include "rh_debug.h"
 #include "rh_color.h"
-#include "./application/rh_app.hh"
+#include "application/rh_app.hh"
+#include "application/rh_math.hh"
 #include "lvgl.h"
 
 #include <misc/lv_math.h>          /* Directory path = " /lvgl/src/misc/lv_math.h" */
@@ -87,69 +86,45 @@ _point{{120,(lv_coord_t)(120+offset)}, {120,(lv_coord_t)(120-len)}}{
 
 
 /**
- * @brief    A sampled version of sin values. Each value are well magnified. 
- * @details  - Sample rate:     90/256
- *           - Amplitude rate:  1/256
- *           - Usage:  Assume `n` is a deg, for  0<=n<90 , sin(n) = TB_SINE[ n*256/90 ]/256;    cos(n) = TB_SINE[ 256-n*256/90 ]/256
- *                                          
-*/
-const unsigned char TB_SINE[] = {
-    0,2,3,5,6,8,9,11,13,14,16,17,19,20,22,23,25,27,28,30,31,33,34,36,37,39,\
-    41,42,44,45,47,48,50,51,53,54,56,57,59,60,62,63,65,67,68,70,71,73,74,76,\
-    77,79,80,81,83,84,86,87,89,90,92,93,95,96,98,99,100,102,103,105,106,108,\
-    109,110,112,113,115,116,117,119,120,122,123,124,126,127,128,130,131,132,\
-    134,135,136,138,139,140,142,143,144,146,147,148,149,151,152,153,154,156,\
-    157,158,159,161,162,163,164,165,167,168,169,170,171,172,174,175,176,177,\
-    178,179,180,181,183,184,185,186,187,188,189,190,191,192,193,194,195,196,\
-    197,198,199,200,201,202,203,204,205,206,207,208,208,209,210,211,212,213,\
-    214,215,215,216,217,218,219,220,220,221,222,223,223,224,225,226,226,227,\
-    228,228,229,230,231,231,232,232,233,234,234,235,236,236,237,237,238,238,\
-    239,240,240,241,241,242,242,243,243,244,244,244,245,245,246,246,247,247,\
-    247,248,248,248,249,249,249,250,250,250,251,251,251,252,252,252,252,252,\
-    253,253,253,253,253,254,254,254,254,254,254,254,255,255,255,255,255,255,\
-    255,255,255,255
-};
-
-
-/**
  * @class rh::widget524505::updateAngle
  * @param (none)
 */
 void ClockNeedleComponent::updateAngle( void){
-    u64 angle = ((((u64)this->_tick)<<10)/_ratio);    // 从系统滴答映射成余弦表格后的角度, 范围[0:1023]
     
+
+    u64 angle = ((((u64)this->_tick)<<10)/_ratio);    // 从系统滴答映射成余弦表格后的角度, 范围[0:1023]
     switch( angle>>8 ){
         case 0:{  // [0:90]
-            _point[1].x = 120 +  ((_len*TB_SINE[     angle])>>8);         // x = L*sin(a)
-            _point[1].y = 120 + -((_len*TB_SINE[0xff-angle])>>8);         // y = L*cos(a) = -L*sin(pi/2-a)
+            _point[1].x = 120 +  ((_len*rh::math::TB_SINE[     angle])>>8);         // x = L*sin(a)
+            _point[1].y = 120 + -((_len*rh::math::TB_SINE[0xff-angle])>>8);         // y = L*cos(a) = -L*sin(pi/2-a)
 
-            _point[0].x = 120 + -((_offset*TB_SINE[     angle])>>8);    
-            _point[0].y = 120 +  ((_offset*TB_SINE[0xff-angle])>>8);    
+            _point[0].x = 120 + -((_offset*rh::math::TB_SINE[     angle])>>8);    
+            _point[0].y = 120 +  ((_offset*rh::math::TB_SINE[0xff-angle])>>8);    
             break;
         }
             
         case 1:{  // [90:180]
             angle -= 256;  // ASSERT( angle<256 && angle>=0 )
-            _point[1].x = 120 - -((_len*TB_SINE[0xff-angle])>>8);         // x = L*sin(a+pi/2) = -L*sin(pi/2-a)
-            _point[1].y = 120 - -((_len*TB_SINE[     angle])>>8);         // y = L*cos(a+pi/2) = -L*sin(a)
-            _point[0].x = 120 + -((_offset*TB_SINE[0xff-angle])>>8);
-            _point[0].y = 120 + -((_offset*TB_SINE[     angle])>>8);
+            _point[1].x = 120 - -((_len*rh::math::TB_SINE[0xff-angle])>>8);         // x = L*sin(a+pi/2) = -L*sin(pi/2-a)
+            _point[1].y = 120 - -((_len*rh::math::TB_SINE[     angle])>>8);         // y = L*cos(a+pi/2) = -L*sin(a)
+            _point[0].x = 120 + -((_offset*rh::math::TB_SINE[0xff-angle])>>8);
+            _point[0].y = 120 + -((_offset*rh::math::TB_SINE[     angle])>>8);
             break;
         }
         case 2:{  // [180:270]
             angle -= 512;
-            _point[1].x = 120 + -((_len*TB_SINE[      angle])>>8);        // x = L*sin(a+pi) =  -L*sin(a)
-            _point[1].y = 120 +  ((_len*TB_SINE[ 0xff-angle])>>8);        // y = L*cos(a+pi) =   L*sin(pi/2-a)
-            _point[0].x = 120 - -((_offset*TB_SINE[      angle])>>8);
-            _point[0].y = 120 -  ((_offset*TB_SINE[ 0xff-angle])>>8);
+            _point[1].x = 120 + -((_len*rh::math::TB_SINE[      angle])>>8);        // x = L*sin(a+pi) =  -L*sin(a)
+            _point[1].y = 120 +  ((_len*rh::math::TB_SINE[ 0xff-angle])>>8);        // y = L*cos(a+pi) =   L*sin(pi/2-a)
+            _point[0].x = 120 - -((_offset*rh::math::TB_SINE[      angle])>>8);
+            _point[0].y = 120 -  ((_offset*rh::math::TB_SINE[ 0xff-angle])>>8);
             break;
         }
         case 3:{  // [270:360]
             angle -= 768;
-            _point[1].x = 120 - ((_len*TB_SINE[ 0xff-angle])>>8);         // x = L*sin(a+3pi/2) = L*sin(pi/2-a)
-            _point[1].y = 120 - ((_len*TB_SINE[      angle])>>8);         // x = L*cos(a+3pi/2) =  L*sin(a)
-            _point[0].x = 120 + ((_offset*TB_SINE[ 0xff-angle])>>8);    
-            _point[0].y = 120 + ((_offset*TB_SINE[      angle])>>8);
+            _point[1].x = 120 - ((_len*rh::math::TB_SINE[ 0xff-angle])>>8);         // x = L*sin(a+3pi/2) = L*sin(pi/2-a)
+            _point[1].y = 120 - ((_len*rh::math::TB_SINE[      angle])>>8);         // x = L*cos(a+3pi/2) =  L*sin(a)
+            _point[0].x = 120 + ((_offset*rh::math::TB_SINE[ 0xff-angle])>>8);    
+            _point[0].y = 120 + ((_offset*rh::math::TB_SINE[      angle])>>8);
             break;
         }
         default:{

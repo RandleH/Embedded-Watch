@@ -78,20 +78,20 @@ int main( int argc, char const *argv[] ){
   rh_light__init();
   
   
+
+  
+
  
   u32 tmp = app.resource.userTick;
   
   
-  void*  list[] = { &app.gui.uiClockClassic, &app.gui.uiClockWheel};
-  rh::ClockWidget  *pClkWidget = &app.gui.uiClockClassic;
-
-  pClkWidget->setTick( 0 );
-  lv_scr_load( (lv_obj_t*)pClkWidget->getScreen());
+  // void*  list[] = { &app.gui.uiClockLouisVuitton, &app.gui.uiClockClassic, &app.gui.uiClockWheel};
+  rh::ClockWidget  *pClkWidget = &app.gui.uiClockLouisVuitton;
 
   
   pClkWidget->setTime( app.resource.time.bit.hour, app.resource.time.bit.minute, app.resource.time.bit.second );
-  
-  app.gui.uiClockLouisVuitton.foo();
+
+  lv_scr_load( (lv_obj_t*)pClkWidget->getScreen());
   
   while(1){
 
@@ -107,13 +107,13 @@ int main( int argc, char const *argv[] ){
     //   key0 = false;
     // }
 
-    // {
-    //   u32 tmpVolatile = app.resource.userTick;
-    //   pClkWidget->incTick( tmpVolatile-tmp );
-    //   tmp = tmpVolatile;
-    // }
+    {
+      u32 tmpVolatile = app.resource.userTick;
+      pClkWidget->incTick( tmpVolatile-tmp );
+      tmp = tmpVolatile;
+    }
 
-    // pClkWidget->update();
+    pClkWidget->update();
     
     
     lv_tick_inc(10);

@@ -78,8 +78,8 @@ int main( int argc, char const *argv[] ){
   rh_light__init();
   
   
-
-  
+  rh_debug__printf( "App start\n");
+  rh_debug__printf( "System time: %d-%d-%d\n", app.resource.time.bit.hour, app.resource.time.bit.minute, app.resource.time.bit.second);
 
  
   u32 tmp = app.resource.userTick;

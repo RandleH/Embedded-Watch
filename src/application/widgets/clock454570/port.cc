@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file    port.cc
   * @author  RandleH
-  * @brief   This file contains source code for ui widget component 454570.         
+  * @brief   Clock widget style: Louis Vuitton.
   ******************************************************************************
   * @attention
   *
@@ -26,7 +26,7 @@
 #include "application/rh_math.hh"
 #include "lvgl.h"
 #include "./port.hh"
-#include "./asset/asset.h"
+#include "./asset.h"
 
 
 /* Namespace -----------------------------------------------------------------*/
@@ -38,7 +38,7 @@ namespace widget454570{
 /* API class. Must be presented in this file                                  */
 /* @category:    User Interface -> Widget                                     */
 /******************************************************************************/
-ClockPanelComponent::ClockPanelComponent( void* screen){
+ClockPanelComponent::ClockPanelComponent( void* screen, u32 hex_c1, u32 hex_c2){
 
     /* Screen Background Setting */
     lv_obj_clear_flag( (lv_obj_t*)screen, LV_OBJ_FLAG_SCROLLABLE );    
@@ -104,8 +104,8 @@ ClockPanelComponent::ClockPanelComponent( void* screen){
     lv_obj_set_x( _obj_icon[10-1], -absOffset_y ); lv_obj_set_y( _obj_icon[10-1], -absOffset_x );
     lv_obj_set_x( _obj_icon[11-1], -absOffset_x ); lv_obj_set_y( _obj_icon[11-1], -absOffset_y );
     
-    /* Default Color Gradient */
-    colorGradient( 0x00921b7b, 0x002e899c);
+    /* Color Gradient */
+    colorGradient( hex_c1, hex_c2);
 }
 
 void ClockPanelComponent::colorGradient( u32 hex_c1, u32 hex_c2){
@@ -152,139 +152,96 @@ void ClockPanelComponent::colorGradient( u32 hex_c1, u32 hex_c2){
 /* Private UI Component                                                       */
 /* @category:    User Interface -> Widget                                     */
 /******************************************************************************/
-ClockNeedleComponent::ClockNeedleComponent( void* screen, u8 len, u8 offset, lv_color_t color):
-_len(len),
-_offset(offset),
-_point{{120,(lv_coord_t)(120+offset)},{120,(lv_coord_t)(120-len)}}{
-    lv_style_init(&_style);
-    lv_style_set_line_width(&_style, 20);
-    lv_style_set_line_color(&_style, color);
-    lv_style_set_line_rounded(&_style, false);
+ClockNeedleComponent::ClockNeedleComponent( void* screen, u32 ratio, u32 hexColor, const void* imgSrc, i16 pivotX, i16 pivotY, i16 posX, i16 posY):
+_ratio(ratio),_color( lv_color_hex(hexColor)){
+    _obj = lv_img_create( (lv_obj_t*)screen);
+    lv_img_set_src( _obj, imgSrc);
+    lv_obj_set_width( _obj, LV_SIZE_CONTENT);  /// 63
+    lv_obj_set_height( _obj, LV_SIZE_CONTENT);   /// 16
+    lv_obj_set_x( _obj, posX );
+    lv_obj_set_y( _obj, posY );
+    lv_obj_set_align( _obj, LV_ALIGN_LEFT_MID );
+    lv_obj_add_flag( _obj, LV_OBJ_FLAG_ADV_HITTEST );   /// Flags
+    lv_obj_clear_flag( _obj, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
+    lv_img_set_pivot(_obj, pivotX, pivotY);
     
-
-    _obj = lv_line_create( (lv_obj_t*)screen);
-    lv_line_set_points( _obj, _point, 2);     /*Set the points*/
-    lv_obj_add_style( _obj, &_style, 0);
+    lv_obj_set_style_img_recolor_opa( _obj, 0xff, 0); 
+    lv_obj_set_style_img_recolor( _obj, lv_color_hex( hexColor), 0);
 }
 
-/**
- * @class rh::widget524505::updateAngle
- * @param (none)
-*/
-void ClockNeedleComponent::updateAngle( void){
-    
-    static u64 angle_old = 0;
-    u64 angle = ((((u64)this->_tick)<<10)/_ratio);    // 从系统滴答映射成余弦表格后的角度, 范围[0:1023]
-
-    if( angle_old==angle )
-        return;
-
-    switch( angle>>8 ){
-        case 0:{  // [0:90]
-            _point[1].x = 120 +  ((_len*rh::math::TB_SINE[     angle])>>8);         // x = L*sin(a)
-            _point[1].y = 120 + -((_len*rh::math::TB_SINE[0xff-angle])>>8);         // y = L*cos(a) = -L*sin(pi/2-a)
-
-            _point[0].x = 120 + -((_offset*rh::math::TB_SINE[     angle])>>8);    
-            _point[0].y = 120 +  ((_offset*rh::math::TB_SINE[0xff-angle])>>8);    
-            break;
-        }
-            
-        case 1:{  // [90:180]
-            angle -= 256;  // ASSERT( angle<256 && angle>=0 )
-            _point[1].x = 120 - -((_len*rh::math::TB_SINE[0xff-angle])>>8);         // x = L*sin(a+pi/2) = -L*sin(pi/2-a)
-            _point[1].y = 120 - -((_len*rh::math::TB_SINE[     angle])>>8);         // y = L*cos(a+pi/2) = -L*sin(a)
-            _point[0].x = 120 + -((_offset*rh::math::TB_SINE[0xff-angle])>>8);
-            _point[0].y = 120 + -((_offset*rh::math::TB_SINE[     angle])>>8);
-            break;
-        }
-        case 2:{  // [180:270]
-            angle -= 512;
-            _point[1].x = 120 + -((_len*rh::math::TB_SINE[      angle])>>8);        // x = L*sin(a+pi) =  -L*sin(a)
-            _point[1].y = 120 +  ((_len*rh::math::TB_SINE[ 0xff-angle])>>8);        // y = L*cos(a+pi) =   L*sin(pi/2-a)
-            _point[0].x = 120 - -((_offset*rh::math::TB_SINE[      angle])>>8);
-            _point[0].y = 120 -  ((_offset*rh::math::TB_SINE[ 0xff-angle])>>8);
-            break;
-        }
-        case 3:{  // [270:360]
-            angle -= 768;
-            _point[1].x = 120 - ((_len*rh::math::TB_SINE[ 0xff-angle])>>8);         // x = L*sin(a+3pi/2) = L*sin(pi/2-a)
-            _point[1].y = 120 - ((_len*rh::math::TB_SINE[      angle])>>8);         // x = L*cos(a+3pi/2) =  L*sin(a)
-            _point[0].x = 120 + ((_offset*rh::math::TB_SINE[ 0xff-angle])>>8);    
-            _point[0].y = 120 + ((_offset*rh::math::TB_SINE[      angle])>>8);
-            break;
-        }
-        default:{
-            while(1); // Something wrong
-        }
-    }
-
-    
-    lv_line_set_points( _obj, _point, 2);     /*Set the points*/
-
-    angle_old = angle;
-}
-
+#include "rh_debug.h"
 void  ClockNeedleComponent::run( u32 tick, int OPT_XXXX ){
+
+    static i16 angle_old = 0;
+    static bool flag = false;
+
     switch( OPT_XXXX){
-        case OPT_FORWARD:{   // Move the needle in the cw direction
-            this->_tick += tick;
-            if( this->_tick >= _ratio ){
-                this->_tick %= _ratio;
-            }
-            break;
-        }
-        case OPT_SET:{       // Set the needle in a absolute position
-            if( tick >= _ratio ){
-                tick %= _ratio;
-            }
+        case OPT_SET:{
             this->_tick = tick;
             break;
         }
-        case OPT_RESET:{      // Reset the needle to the 12'o clock position
-            this->_tick = 0;
+        case OPT_FORWARD:{
+            this->_tick += tick;
             break;
         }
-        case OPT_BACKWARD:{  // Move the needle in the ccw direction 
-            this->_tick -= tick;
-            if( this->_tick >= _ratio ){
-                this->_tick %= _ratio;
-            }
+        default:{
             break;
         }
-        default:{            // No operation
-            break;
-        }
-
     }
 
-    updateAngle();
-}
-
-void ClockNeedleComponent::hide( bool cmd){
-    if( cmd==true ){
-        lv_obj_add_flag( _obj, LV_OBJ_FLAG_HIDDEN);
-    }else{
-        lv_obj_clear_flag( _obj, LV_OBJ_FLAG_HIDDEN);
+    if( this->_tick >= _ratio ){
+        this->_tick %= _ratio;
     }
+
+    
+
+    i16 angle;
+
+    switch( _ratio ){ // Some of the common ratio cam be optimized
+        case 60*1000:{
+            angle = ((_tick<<1)+_tick)/3;
+            break;
+        }
+        case 60*1000*60:{
+            angle = _tick/1000;
+            break;
+        }
+        case 60*1000*60*12:{
+            angle = _tick/12000;
+            break;
+        }
+        
+        default:{  // Overflow may occur
+            angle = this->_tick * 3600/ _ratio;
+            break;
+        }
+    }
+
+
+    if( !flag){
+        rh_debug__printf( "Initial angle = %d\n", angle);
+        rh_debug__printf( "Initial local tick = %d\n", _tick);
+        rh_debug__printf( "Initial tick = %d\n", tick);
+        flag = true;
+    }
+
+
+    if( angle_old != angle){
+        lv_img_set_angle(_obj, angle-900);
+        angle_old = angle;
+    }
+
 }
 
-u32   ClockNeedleComponent::ratio( void)     { return _ratio;}
-void  ClockNeedleComponent::ratio( u32 val)  { _ratio = val; }
-
-u8    ClockNeedleComponent::length( void)    { return _len; }
-void  ClockNeedleComponent::length( u8 val)  { _len = val;  }
-
-u8    ClockNeedleComponent::width( void)     { return (u8)lv_obj_get_style_line_width( _obj, LV_PART_MAIN);}
-void  ClockNeedleComponent::width( u8 val)   { lv_obj_set_style_line_width( _obj, val, LV_PART_MAIN);      }
-
-u8    ClockNeedleComponent::offset( void)    { return _offset; }
-void  ClockNeedleComponent::offset( u8 val)  { _offset = val;  }
+u32   ClockNeedleComponent::ratio( void) const    { return _ratio;}
+void  ClockNeedleComponent::ratio( u32 val)       { _ratio = val; }
 
 
-
-
-
-
+lv_color_t ClockNeedleComponent::color( void) const  { return _color;}
+void       ClockNeedleComponent::color( u32 hexColor){
+    _color = lv_color_hex(hexColor);
+    lv_obj_set_style_img_recolor( _obj, _color, 0);
+}
 
 
 
@@ -298,36 +255,88 @@ void  ClockNeedleComponent::offset( u8 val)  { _offset = val;  }
 /* @category:    User Interface -> Widget                                     */
 /******************************************************************************/
 Widget::Widget( void* screen):
-rh::ClockWidget{screen},
-ccPanel{screen},
-ccNeedleMinute{screen, 80, 20, lv_color_hex(0x00fbd300)},
-ccNeedleHour  {screen, 50, 20, lv_color_hex(0x00fb0000)}{
+rh::ClockWidget{screen}
 
-    // ccNeedleSecond.ratio( 60000);
-    ccNeedleHour.ratio( 60000*60 );
-    ccNeedleMinute.ratio( 60000*60*12 );
+#if WIDGET_SHOW_CLOCK_PANEL
+    ,ccPanel{         /* INIT LIST FOR Clock Panel */
+        screen,       /*!< LVGL screen source pointer */ 
+        0x00921b7b,   /*!< Initial leftmost color of LV icon */
+        0x002e899c    /*!< Initial rightmost color of LV icon */
+    }
+#endif
+
+,ccPanel2{
+    screen
 }
+
+#if WIDGET_SHOW_NEEDLE_SECOND
+    ,ccNeedleSecond{        /* INIT LIST FOR Clock Needle */
+        screen,             /*!< LVGL screen source pointer */ 
+        60*1000,            /*!< Tick count that takes the needle turn around assumming 1kHz tick rate */
+        0x00ffa70e,         /*!< Initial needle color */
+        &ui_img_1832269932, /*!< Needle style image source (LVGL iamge) */
+        8,                  /*!< Rotation pivot X */
+        8,                  /*!< Rotation pivot Y */
+        113,                /*!< X Position of needle assumming align left */
+        0                   /*!< Y Position of needle assumming align middle */
+    }
+#endif
+
+#if WIDGET_SHOW_NEEDLE_MINUTE
+    ,ccNeedleMinute{        /* INIT LIST FOR Clock Needle */
+        screen,             /*!< LVGL screen source pointer */ 
+        60*1000*60,         /*!< Tick count that takes the needle turn around assumming 1kHz tick rate */
+        0x00ffa70e,         /*!< Initial needle color */
+        &ui_img_1832269932, /*!< Needle style image source (LVGL iamge) */
+        8,                  /*!< Rotation pivot X */
+        8,                  /*!< Rotation pivot Y */
+        113,                /*!< X Position of needle assumming align left */
+        0                   /*!< Y Position of needle assumming align middle */
+    }
+#endif
+
+#if WIDGET_SHOW_NEEDLE_HOUR
+    ,ccNeedleHour{          /* INIT LIST FOR Clock Needle */
+        screen,             /*!< LVGL screen source pointer */ 
+        60*1000*60*12,      /*!< Tick count that takes the needle turn around assumming 1kHz tick rate */
+        0x00cd860a,         /*!< Initial needle color */
+        &ui_img_2070302622, /*!< Needle style image source (LVGL iamge) */
+        8,                  /*!< Rotation pivot X */
+        8,                  /*!< Rotation pivot Y */
+        113,                /*!< X Position of needle assumming align left */
+        0                   /*!< Y Position of needle assumming align middle */
+    }
+#endif
+{   /* Do nothing at function body */  }
+
+
 
 int Widget::setTime( u8 hh, u8 mm, u8 ss ){
     if( hh>=24 || mm>=60 || ss>=60 ) return 1;
 
     hh %= 12;
     u32 ratio;
+
+#if WIDGET_SHOW_NEEDLE_SECOND
+    {
+        ratio = ccNeedleSecond.ratio();
+        ccNeedleSecond.run( ss*ratio/60, OPT_SET);
+    }
+#endif
+
+#if WIDGET_SHOW_NEEDLE_HOUR    
     {
         ratio = ccNeedleHour.ratio();
         ccNeedleHour.run( hh*ratio/12 + mm*ratio/(60*12) + ss*ratio/(60*60*12), OPT_SET);
     }
+#endif
 
+#if WIDGET_SHOW_NEEDLE_MINUTE
     {
         ratio = ccNeedleMinute.ratio();
         ccNeedleMinute.run( mm*ratio/60 + ss*ratio/(60*60), OPT_SET);
     }
-    
-    {
-        // ratio = ccNeedleSecond.ratio();
-        // ccNeedleSecond.run( ss*ratio/60, OPT_SET);
-    }
-    
+#endif        
     return done();
 }
 
@@ -339,9 +348,17 @@ int Widget::setDayNight( bool day_night){return -1;}
  * @brief 
 */
 int Widget::update( void){
-    // ccNeedleSecond.run( this->tickInc, OPT_FORWARD);
+#if WIDGET_SHOW_NEEDLE_SECOND
+    ccNeedleSecond.run( this->tickInc, OPT_FORWARD);
+#endif
+
+#if WIDGET_SHOW_NEEDLE_MINUTE    
     ccNeedleMinute.run( this->tickInc, OPT_FORWARD);
+#endif
+
+#if WIDGET_SHOW_NEEDLE_HOUR
     ccNeedleHour.run( this->tickInc, OPT_FORWARD);
+#endif    
     return done();
 }
 

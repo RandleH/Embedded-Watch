@@ -22,6 +22,7 @@
 #include <utility>
 #include "application/rh_visual.hh"
 #include "application/rh_asset.h"
+#include "./config.h"
 #include "rh_common.h"
 #include "rh_color.h"
 
@@ -49,49 +50,31 @@ class ClockPanelComponent{
 private:
     lv_obj_t *_obj_icon[12];
 public:
-    ClockPanelComponent( void* screen);
+    ClockPanelComponent( void* screen, u32 hex_c1, u32 hex_c2);
     void colorGradient( u32 hex_c1, u32 hex_c2);
 };
 
 
 
-/******************************************************************************/
-/* Private UI Component                                                       */
-/* @category:    User Interface -> Widget                                     */
-/******************************************************************************/
+
 class ClockNeedleComponent{
 private:
-    lv_obj_t  *_obj;
-    lv_style_t _style;            /*!< Line style for main part such as width and color */
-    u8         _len;              /*!< Length of the needle */
-    u8         _offset;           /*!< Length of other side of the needle */
+    lv_obj_t* _obj;
     u32        _tick;             /*<! Current tick count */
-    lv_point_t _point[2];         /*!< End point coordinate of needle */
     u32        _ratio;            /*!< Systick tick vs. Needle Move Step */
-
-    void       updateAngle( void);
-   
+    lv_color_t _color;            /*!< Needle color */
 public:
-    ClockNeedleComponent( void* screen, u8 len, u8 offset, lv_color_t color);
+    ClockNeedleComponent( void* screen, u32 ratio, u32 hex_c, const void* imgSrc, i16 pivotX, i16 pivotY, i16 posX, i16 poxY);
 
     void  run( u32 tick, int OPT_XXXX );
 
-    void  hide( bool cmd);
-
-    u32   ratio( void);
+    u32   ratio( void) const;
     void  ratio( u32 val);
 
-    u8    length( void);
-    void  length( u8 val);
-
-    u8    width( void);
-    void  width( u8 val);
-
-    u8    offset( void);
-    void  offset( u8 val);
+    lv_color_t color( void) const;
+    void       color( u32 hexColor);
 
 };
-
 
 
 /******************************************************************************/
@@ -100,10 +83,22 @@ public:
 /******************************************************************************/
 class Widget final: public rh::ClockWidget{
 private:    
+#if WIDGET_SHOW_CLOCK_PANEL
     ClockPanelComponent   ccPanel;
+#endif
 
+#if WIDGET_SHOW_NEEDLE_SECOND
+    ClockNeedleComponent  ccNeedleSecond;
+#endif
+
+#if WIDGET_SHOW_NEEDLE_MINUTE
     ClockNeedleComponent  ccNeedleMinute;
+#endif 
+
+#if WIDGET_SHOW_NEEDLE_HOUR
     ClockNeedleComponent  ccNeedleHour;
+#endif
+
 public:
     Widget( void * screen);
     int setTime( u8 hour, u8 minute, u8 second );
